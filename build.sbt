@@ -2,6 +2,7 @@ sbtPlugin := true
 
 name := "sbt-guardrail"
 organization := "com.twilio"
+licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 scalaVersion := "2.12.4"
 scalacOptions += "-feature"
