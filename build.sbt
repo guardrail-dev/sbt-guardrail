@@ -24,3 +24,4 @@ bintrayRepository := {
   if (isSnapshot.value) "snapshots"
   else "releases"
 }
+publishMavenStyle := true
