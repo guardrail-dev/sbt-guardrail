@@ -4,7 +4,7 @@ name := "sbt-guardrail"
 organization := "com.twilio"
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.5"
 scalacOptions += "-feature"
 
 // Versioning
@@ -15,7 +15,7 @@ git.useGitDescribe := true
 
 // Dependencies
 resolvers += Resolver.bintrayRepo("twilio", "releases")
-libraryDependencies += "com.twilio" %% "guardrail" % "0.34.0"
+libraryDependencies += "com.twilio" %% "guardrail" % "0.34.1"
 
 // Release
 bintrayOrganization := Some("twilio")
