@@ -8,13 +8,14 @@ import cats.instances.all._
 import com.twilio.guardrail.{Common, CoreTarget}
 import com.twilio.guardrail.core.CoreTermInterp
 import com.twilio.guardrail.terms.{CoreTerm, CoreTerms, GetDefaultFramework}
+import com.twilio.guardrail.generators.GeneratorSettings
 import scala.language.higherKinds
 import scala.io.AnsiColor
 import _root_.sbt.WatchSource
 
 object Compat {
   import java.nio.charset.StandardCharsets.UTF_8
-import java.nio.file.{Files, Path, StandardOpenOption}
+  import java.nio.file.{Files, Path, StandardOpenOption}
   val unsafeWriteTree: WriteTree => Path = { case WriteTree(path, tree) =>
     val UTF8 = java.nio.charset.Charset.availableCharsets.get("UTF-8")
     val data = tree.syntax.getBytes(UTF8)
@@ -75,12 +76,13 @@ object Tasks {
         case UnknownFramework(name) =>
           println(s"${AnsiColor.RED}Unknown framework specified: ${name}${AnsiColor.RESET}")
           List.empty
-      }, _.toList.flatMap({ rs =>
+      }, _.toList.flatMap({ case (generatorSettings, rs) =>
         ReadSwagger.unsafeReadSwagger(rs)
           .fold({ err =>
             println(s"${AnsiColor.RED}Error: ${err}${AnsiColor.RESET}")
             unsafePrintHelp()
           }, _.map(Compat.unsafeWriteTree).map(_.toFile))
+          .run(generatorSettings)
           .value
       })).value.distinct
   }
@@ -89,7 +91,7 @@ object Tasks {
     tasks.flatMap(_.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
   }
 
-  private[this] def runM[F[_]](args: List[GuardrailPlugin.Args])(implicit C: CoreTerms[F]): Free[F, NonEmptyList[ReadSwagger[Target[List[WriteTree]]]]] = {
+  private[this] def runM[F[_]](args: List[GuardrailPlugin.Args])(implicit C: CoreTerms[F]): Free[F, NonEmptyList[(GeneratorSettings, ReadSwagger[Target[List[WriteTree]]])]] = {
     import C._
 
     for {
