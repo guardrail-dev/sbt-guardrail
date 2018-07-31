@@ -4,6 +4,6 @@
 
 3. Checkout the tag. This will cause `sbt version` to print out a non-SNAPSHOT version number
 
-4. `sbt publish` to stage artifacts
+4. `sbt publishSigned` to stage artifacts
 
 5. `sbt bintrayRelease` to release binary artifacts
