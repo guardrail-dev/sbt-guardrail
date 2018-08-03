@@ -2,7 +2,9 @@ sbtPlugin := true
 
 name := "sbt-guardrail"
 organization := "com.twilio"
-licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+description := "Principled code generation for Scala services from OpenAPI specifications, sbt plugin"
+homepage := Some(url("https://github.com/twilio/sbt-guardrail"))
+licenses += ("MIT", url("https://github.com/twilio/guardrail/blob/master/LICENSE"))
 
 scalaVersion := "2.12.6"
 scalacOptions += "-feature"
