@@ -26,4 +26,14 @@ bintrayRepository := {
   if (isSnapshot.value) "snapshots"
   else "releases"
 }
+
 publishMavenStyle := true
+
+addCommandAlias(
+  "publishBintray",
+  "; set publishTo := (publishTo in bintray).value; publishSigned"
+)
+addCommandAlias(
+  "publishSonatype",
+  "; set publishTo := sonatypePublishTo.value; publishSigned"
+)
