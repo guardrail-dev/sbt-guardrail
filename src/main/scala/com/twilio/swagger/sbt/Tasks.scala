@@ -3,7 +3,7 @@ package sbt
 
 import cats.~>
 import cats.free.Free
-import cats.data.NonEmptyList
+import cats.data.{EitherT, NonEmptyList, WriterT}
 import cats.instances.all._
 import com.twilio.guardrail.{Common, CoreTarget}
 import com.twilio.guardrail.core.CoreTermInterp
@@ -11,7 +11,9 @@ import com.twilio.guardrail.terms.{CoreTerm, CoreTerms, GetDefaultFramework}
 import com.twilio.guardrail.generators.GeneratorSettings
 import scala.language.higherKinds
 import scala.io.AnsiColor
-import _root_.sbt.WatchSource
+import _root_.sbt.{FeedbackProvidedException, WatchSource}
+
+class CodegenFailedException extends FeedbackProvidedException
 
 object Tasks {
   def guardrailTask(tasks: List[GuardrailPlugin.Args], sourceDir: java.io.File): Seq[java.io.File] = {
@@ -20,30 +22,36 @@ object Tasks {
       .fold({
         case MissingArg(args, Error.ArgName(arg)) =>
           println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
-          unsafePrintHelp()
+          throw new CodegenFailedException()
         case NoArgsSpecified =>
-          // Should be debug-only println(s"${AnsiColor.RED}No arguments specified${AnsiColor.RESET}")
-          unsafePrintHelp()
+          List.empty
         case NoFramework =>
           println(s"${AnsiColor.RED}No framework specified${AnsiColor.RESET}")
-          unsafePrintHelp()
+          throw new CodegenFailedException()
         case PrintHelp =>
-          unsafePrintHelp()
+          List.empty
         case UnknownArguments(args) =>
           println(s"${AnsiColor.RED}Unknown arguments: ${args.mkString(" ")}${AnsiColor.RESET}")
-          unsafePrintHelp()
+          throw new CodegenFailedException()
         case UnparseableArgument(name, message) =>
           println(s"${AnsiColor.RED}Unparseable argument ${name}: ${message}${AnsiColor.RESET}")
-          unsafePrintHelp()
+          throw new CodegenFailedException()
         case UnknownFramework(name) =>
           println(s"${AnsiColor.RED}Unknown framework specified: ${name}${AnsiColor.RESET}")
-          List.empty
+          throw new CodegenFailedException()
       }, _.toList.flatMap({ case (generatorSettings, rs) =>
-        ReadSwagger.unsafeReadSwagger(rs)
-          .fold({ err =>
+        EitherT.fromEither[Settings](ReadSwagger.readSwagger(rs))
+        .flatMap(identity)
+        .fold({ err =>
             println(s"${AnsiColor.RED}Error: ${err}${AnsiColor.RESET}")
-            unsafePrintHelp()
-          }, _.map(WriteTree.unsafeWriteTree).map(_.toFile))
+            throw new CodegenFailedException()
+          }, _.map(WriteTree.unsafeWriteTreeLogged).map({ case WriterT((lines, path)) =>
+            if (lines.nonEmpty) {
+              lines.foreach(err => println(s"${AnsiColor.RED}Error: ${err}${AnsiColor.RESET}"))
+              throw new CodegenFailedException()
+            }
+            path
+          }).map(_.toFile))
           .run(generatorSettings)
           .value
       })).value.distinct
@@ -62,6 +70,4 @@ object Tasks {
       writeTrees <- Common.processArgs(args)
     } yield writeTrees
   }
-
-  private[this] def unsafePrintHelp(): List[java.io.File] = List.empty
 }
