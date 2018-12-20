@@ -8,7 +8,6 @@ import cats.instances.all._
 import com.twilio.guardrail.{Common, CoreTarget}
 import com.twilio.guardrail.core.CoreTermInterp
 import com.twilio.guardrail.terms.{CoreTerm, CoreTerms, GetDefaultFramework}
-import com.twilio.guardrail.generators.GeneratorSettings
 import scala.language.higherKinds
 import scala.io.AnsiColor
 import _root_.sbt.{FeedbackProvidedException, WatchSource}
@@ -39,14 +38,13 @@ object Tasks {
         case UnknownFramework(name) =>
           println(s"${AnsiColor.RED}Unknown framework specified: ${name}${AnsiColor.RESET}")
           throw new CodegenFailedException()
-      }, _.toList.flatMap({ case (generatorSettings, rs) =>
-        EitherT.fromEither[Settings](ReadSwagger.readSwagger(rs))
+      }, _.toList.flatMap({ rs =>
+        EitherT.fromEither[Logger](ReadSwagger.readSwagger(rs))
         .flatMap(identity)
         .fold({ err =>
             println(s"${AnsiColor.RED}Error: ${err}${AnsiColor.RESET}")
             throw new CodegenFailedException()
           }, _.map(WriteTree.unsafeWriteTreeLogged).map(_.value.toFile))
-          .run(generatorSettings)
           .value
       })).value.distinct
   }
@@ -55,7 +53,7 @@ object Tasks {
     tasks.flatMap(_.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
   }
 
-  private[this] def runM[F[_]](args: List[GuardrailPlugin.Args])(implicit C: CoreTerms[F]): Free[F, NonEmptyList[(GeneratorSettings, ReadSwagger[Target[List[WriteTree]]])]] = {
+  private[this] def runM[F[_]](args: List[GuardrailPlugin.Args])(implicit C: CoreTerms[F]): Free[F, NonEmptyList[ReadSwagger[Target[List[WriteTree]]]]] = {
     import C._
 
     for {
