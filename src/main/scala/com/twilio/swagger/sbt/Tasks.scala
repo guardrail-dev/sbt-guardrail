@@ -1,24 +1,32 @@
 package com.twilio.guardrail
 package sbt
 
-import cats.~>
-import cats.free.Free
-import cats.data.{EitherT, NonEmptyList, WriterT}
-import cats.instances.all._
-import com.twilio.guardrail.{Common, CoreTarget}
-import com.twilio.guardrail.core.CoreTermInterp
-import com.twilio.guardrail.terms.{CoreTerm, CoreTerms, GetDefaultFramework}
-import scala.language.higherKinds
-import scala.io.AnsiColor
 import _root_.sbt.{FeedbackProvidedException, WatchSource}
+import cats.data.{EitherT, NonEmptyList, WriterT}
+import cats.free.Free
+import cats.implicits._
+import cats.~>
+import com.twilio.guardrail.core.CoreTermInterp
+import com.twilio.guardrail.languages.{ ScalaLanguage, LA }
+import com.twilio.guardrail.terms.{CoreTerm, CoreTerms, GetDefaultFramework}
+import com.twilio.guardrail.{Common, CoreTarget}
+import scala.io.AnsiColor
+import scala.language.higherKinds
+import scala.meta._
 
 class CodegenFailedException extends FeedbackProvidedException
 
 object Tasks {
   def guardrailTask(tasks: List[GuardrailPlugin.Args], sourceDir: java.io.File): Seq[java.io.File] = {
     val preppedTasks = tasks.map(_.copy(outputPath=Some(sourceDir.getPath)))
-    runM[CoreTerm](preppedTasks).foldMap(CoreTermInterp)
-      .fold({
+    runM[ScalaLanguage, CoreTerm[ScalaLanguage, ?]](preppedTasks).foldMap(CoreTermInterp[ScalaLanguage](
+      "akka-http", {
+        case "akka-http" => com.twilio.guardrail.generators.AkkaHttp
+        case "http4s"    => com.twilio.guardrail.generators.Http4s
+      }, {
+        _.parse[Importer].toEither.bimap(err => UnparseableArgument("import", err.toString), importer => Import(List(importer)))
+      }
+    )).fold({
         case MissingArg(args, Error.ArgName(arg)) =>
           println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
           throw new CodegenFailedException()
@@ -53,7 +61,7 @@ object Tasks {
     tasks.flatMap(_.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
   }
 
-  private[this] def runM[F[_]](args: List[GuardrailPlugin.Args])(implicit C: CoreTerms[F]): Free[F, NonEmptyList[ReadSwagger[Target[List[WriteTree]]]]] = {
+  private[this] def runM[L <: LA, F[_]](args: List[GuardrailPlugin.Args])(implicit C: CoreTerms[L, F]): Free[F, NonEmptyList[ReadSwagger[Target[List[WriteTree]]]]] = {
     import C._
 
     for {
