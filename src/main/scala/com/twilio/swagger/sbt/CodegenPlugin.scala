@@ -89,6 +89,10 @@ object GuardrailPlugin extends AutoPlugin {
       val kind = CodegenTargetImpl.Client
     }
 
+    object Models extends ClientServer {
+      val kind = CodegenTargetImpl.Models
+    }
+
     object Server extends ClientServer {
       val kind = CodegenTargetImpl.Server
     }

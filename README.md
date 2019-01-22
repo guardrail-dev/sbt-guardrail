@@ -23,6 +23,7 @@ addSbtPlugin("com.twilio" % "sbt-guardrail" % "0.37.1-M1")
 guardrailTasks in Compile := List(
   Client(file("petstore.yaml")),
   Client(file("github.yaml"), pkg="com.example.clients.github"),
-  Server(file("myserver.yaml"), pkg="com.example.server", tracing=true)
+  Server(file("myserver.yaml"), pkg="com.example.server", tracing=true),
+  Models(file("myserver.yaml"), pkg="com.example.models")
 )
 ```
