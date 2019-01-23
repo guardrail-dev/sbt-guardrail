@@ -19,14 +19,14 @@ class CodegenFailedException extends FeedbackProvidedException
 object Tasks {
   def guardrailTask(tasks: List[GuardrailPlugin.Args], sourceDir: java.io.File): Seq[java.io.File] = {
     val preppedTasks = tasks.map(_.copy(outputPath=Some(sourceDir.getPath)))
-    runM[ScalaLanguage, CoreTerm[ScalaLanguage, ?]](preppedTasks).foldMap(CoreTermInterp[ScalaLanguage](
+    val result = runM[ScalaLanguage, CoreTerm[ScalaLanguage, ?]](preppedTasks).foldMap(CoreTermInterp[ScalaLanguage](
       "akka-http", {
         case "akka-http" => com.twilio.guardrail.generators.AkkaHttp
         case "http4s"    => com.twilio.guardrail.generators.Http4s
       }, {
         _.parse[Importer].toEither.bimap(err => UnparseableArgument("import", err.toString), importer => Import(List(importer)))
       }
-    )).fold({
+    )).fold[List[ReadSwagger[Target[List[WriteTree]]]]]({
         case MissingArg(args, Error.ArgName(arg)) =>
           println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
           throw new CodegenFailedException()
@@ -46,15 +46,33 @@ object Tasks {
         case UnknownFramework(name) =>
           println(s"${AnsiColor.RED}Unknown framework specified: ${name}${AnsiColor.RESET}")
           throw new CodegenFailedException()
-      }, _.toList.flatMap({ rs =>
-        EitherT.fromEither[Logger](ReadSwagger.readSwagger(rs))
-        .flatMap(identity)
-        .fold({ err =>
-            println(s"${AnsiColor.RED}Error: ${err}${AnsiColor.RESET}")
-            throw new CodegenFailedException()
-          }, _.map(WriteTree.unsafeWriteTreeLogged).map(_.value.toFile))
-          .value
-      })).value.distinct
+      }, _.toList)
+
+    val (coreLogger, deferred) = result.run
+
+    val (logger, paths) = deferred
+      .traverse({ rs =>
+        ReadSwagger
+          .readSwagger(rs)
+          .fold(
+            { err =>
+              println(s"${AnsiColor.RED}${err}${AnsiColor.RESET}")
+              throw new CodegenFailedException()
+            },
+            _.fold(
+              {
+                case err =>
+                  println(s"${AnsiColor.RED}Error: ${err}${AnsiColor.RESET}")
+                  throw new CodegenFailedException()
+              },
+              _.map(WriteTree.unsafeWriteTree)
+            )
+          )
+      })
+      .map(_.flatten)
+      .run
+
+    paths.toList.map(_.toFile)
   }
 
   def watchSources(tasks: List[GuardrailPlugin.Args]): Seq[WatchSource] = {
