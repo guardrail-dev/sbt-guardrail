@@ -73,7 +73,7 @@ object Tasks {
       .map(_.flatten)
       .run
 
-    paths.toList.map(_.toFile)
+    paths.toList.map(_.toFile).distinct
   }
 
   def watchSources(tasks: List[GuardrailPlugin.Args]): Seq[WatchSource] = {
