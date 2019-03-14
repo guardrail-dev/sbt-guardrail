@@ -8,7 +8,7 @@ Installation
 
 ### `project/plugins.sbt`
 ```
-addSbtPlugin("com.twilio" % "sbt-guardrail" % "0.37.1-M1")
+addSbtPlugin("com.twilio" % "sbt-guardrail" % "<Please use the latest available release!>")
 ```
 
 ### `build.sbt`
