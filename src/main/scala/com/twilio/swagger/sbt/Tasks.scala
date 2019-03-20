@@ -59,7 +59,7 @@ object Tasks {
           throw new CodegenFailedException()
       }, _.toList)
 
-    val (coreLogger, deferred) = result.run
+    val (coreLogger, deferred) = result.runEmpty
 
     val (logger, paths) = deferred
       .traverse({ rs =>
@@ -81,7 +81,7 @@ object Tasks {
           )
       })
       .map(_.flatten)
-      .run
+      .runEmpty
 
     Thread.currentThread().setContextClassLoader(oldClassLoader)
     paths.toList.map(_.toFile).distinct
