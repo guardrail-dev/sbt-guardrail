@@ -13,11 +13,22 @@ import com.twilio.guardrail.{Common, CoreTarget}
 import scala.io.AnsiColor
 import scala.language.higherKinds
 import scala.meta._
+import _root_.io.swagger.parser.SwaggerParserExtension
 
 class CodegenFailedException extends FeedbackProvidedException
 
 object Tasks {
   def guardrailTask(tasks: List[GuardrailPlugin.Args], sourceDir: java.io.File): Seq[java.io.File] = {
+    // swagger-parser uses SPI to find extensions on the classpath (by default, only the OAPI2 -> OAPI3 converter)
+    // See https://github.com/swagger-api/swagger-parser#extensions
+    // That being said, Scala's classloader seems to have some issues finding SPI resources:
+    // - https://github.com/scala/bug/issues/10247
+    // - https://github.com/meetup/sbt-openapi/blob/363fa14/src/main/scala/com/meetup/sbtopenapi/Plugin.scala#L64-L71
+    // As a result, we temporarily overwrite Scala's classloader to whichever one loaded swagger-parser, in the hopes
+    // that it'll pick up the rest of the SPI classes.
+    val oldClassLoader = Thread.currentThread().getContextClassLoader()
+    Thread.currentThread().setContextClassLoader(classOf[SwaggerParserExtension].getClassLoader)
+
     val preppedTasks = tasks.map(_.copy(outputPath=Some(sourceDir.getPath)))
     val result = runM[ScalaLanguage, CoreTerm[ScalaLanguage, ?]](preppedTasks).foldMap(CoreTermInterp[ScalaLanguage](
       "akka-http", {
@@ -72,6 +83,7 @@ object Tasks {
       .map(_.flatten)
       .run
 
+    Thread.currentThread().setContextClassLoader(oldClassLoader)
     paths.toList.map(_.toFile).distinct
   }
 
