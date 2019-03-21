@@ -38,6 +38,7 @@ object GuardrailPlugin extends AutoPlugin {
 
   sealed trait ClientServer {
     val kind: CodegenTargetImpl
+    val language: String
 
     def apply(
       specPath: java.io.File,
@@ -46,7 +47,7 @@ object GuardrailPlugin extends AutoPlugin {
       framework: Keys.SwaggerConfigValue[String] = Keys.Default,
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-    ): ArgsImpl = impl(
+    ): (Language, ArgsImpl) = (language, impl(
       kind = kind,
       specPath = Some(specPath),
       packageName = Some(pkg),
@@ -55,7 +56,7 @@ object GuardrailPlugin extends AutoPlugin {
       tracing = tracing.toOption,
       imports = imports.toOption.getOrElse(List.empty),
       defaults = false
-    )
+    ))
 
     def defaults(
       pkg: Keys.SwaggerConfigValue[String] = Keys.Default,
@@ -67,7 +68,7 @@ object GuardrailPlugin extends AutoPlugin {
       // Deprecated parameters
       packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
       dtoPackage: Keys.SwaggerConfigValue[String] = Keys.Default
-    ): ArgsImpl = impl(
+    ): (Language, ArgsImpl) = (language, impl(
       kind = kind,
       specPath = None,
       packageName = pkg.toOption.orElse(packageName.toOption),
@@ -76,7 +77,7 @@ object GuardrailPlugin extends AutoPlugin {
       tracing = tracing.toOption,
       imports = imports.toOption.getOrElse(List.empty),
       defaults = true
-    )
+    ))
   }
 
 
@@ -87,14 +88,17 @@ object GuardrailPlugin extends AutoPlugin {
 
     object Client extends ClientServer {
       val kind = CodegenTargetImpl.Client
+      val language = "scala"
     }
 
     object Models extends ClientServer {
       val kind = CodegenTargetImpl.Models
+      val language = "scala"
     }
 
     object Server extends ClientServer {
       val kind = CodegenTargetImpl.Server
+      val language = "scala"
     }
   }
 
@@ -110,8 +114,7 @@ object GuardrailPlugin extends AutoPlugin {
   )
 
   type Context = ContextImpl
-  val Context = ContextImpl
 
-  type Args = ArgsImpl
-  val Args = ArgsImpl
+  type Language = String
+  type Args = (Language, ArgsImpl)
 }

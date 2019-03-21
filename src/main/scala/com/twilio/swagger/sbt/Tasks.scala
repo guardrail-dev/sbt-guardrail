@@ -29,9 +29,9 @@ object Tasks {
     val oldClassLoader = Thread.currentThread().getContextClassLoader()
     Thread.currentThread().setContextClassLoader(classOf[SwaggerParserExtension].getClassLoader)
 
-    val preppedTasks: Map[String, NonEmptyList[ArgsImpl]] = tasks.foldLeft(Map.empty[String, NonEmptyList[ArgsImpl]]) { case (acc, args) =>
+    val preppedTasks: Map[String, NonEmptyList[ArgsImpl]] = tasks.foldLeft(Map.empty[String, NonEmptyList[ArgsImpl]]) { case (acc, (language, args)) =>
       val prepped = args.copy(outputPath=Some(sourceDir.getPath))
-      acc.updated("scala", acc.get("scala").fold(NonEmptyList.one(prepped))(_ :+ prepped))
+      acc.updated(language, acc.get(language).fold(NonEmptyList.one(prepped))(_ :+ prepped))
     }
 
     val result = preppedTasks.toList.flatTraverse({ case (language, args) =>
@@ -99,7 +99,7 @@ object Tasks {
   }
 
   def watchSources(tasks: List[GuardrailPlugin.Args]): Seq[WatchSource] = {
-    tasks.flatMap(_.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
+    tasks.flatMap(_._2.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
   }
 
   private[this] def runM[L <: LA, F[_]](args: NonEmptyList[ArgsImpl])(implicit C: CoreTerms[L, F]): Free[F, NonEmptyList[ReadSwagger[Target[List[WriteTree]]]]] = {
