@@ -9,7 +9,7 @@ import cats.~>
 import com.twilio.guardrail.core.CoreTermInterp
 import com.twilio.guardrail.languages.{ ScalaLanguage, LA }
 import com.twilio.guardrail.terms.{CoreTerm, CoreTerms, GetDefaultFramework}
-import com.twilio.guardrail.{Common, CoreTarget}
+import com.twilio.guardrail.{Args => ArgsImpl, Common, CoreTarget}
 import scala.io.AnsiColor
 import scala.language.higherKinds
 import scala.meta._
@@ -29,15 +29,25 @@ object Tasks {
     val oldClassLoader = Thread.currentThread().getContextClassLoader()
     Thread.currentThread().setContextClassLoader(classOf[SwaggerParserExtension].getClassLoader)
 
-    val preppedTasks = tasks.map(_.copy(outputPath=Some(sourceDir.getPath)))
-    val result = runM[ScalaLanguage, CoreTerm[ScalaLanguage, ?]](preppedTasks).foldMap(CoreTermInterp[ScalaLanguage](
-      "akka-http", {
-        case "akka-http" => com.twilio.guardrail.generators.AkkaHttp
-        case "http4s"    => com.twilio.guardrail.generators.Http4s
-      }, {
-        _.parse[Importer].toEither.bimap(err => UnparseableArgument("import", err.toString), importer => Import(List(importer)))
-      }
-    )).fold[List[ReadSwagger[Target[List[WriteTree]]]]]({
+    val preppedTasks: Map[String, NonEmptyList[ArgsImpl]] = tasks.foldLeft(Map.empty[String, NonEmptyList[ArgsImpl]]) { case (acc, args) =>
+      val prepped = args.copy(outputPath=Some(sourceDir.getPath))
+      acc.updated("scala", acc.get("scala").fold(NonEmptyList.one(prepped))(_ :+ prepped))
+    }
+
+    val result = preppedTasks.toList.flatTraverse({ case (language, args) =>
+      (language match {
+        case "scala" =>
+          runM[ScalaLanguage, CoreTerm[ScalaLanguage, ?]](args).foldMap(CoreTermInterp[ScalaLanguage](
+            "akka-http", {
+              case "akka-http" => com.twilio.guardrail.generators.AkkaHttp
+              case "http4s"    => com.twilio.guardrail.generators.Http4s
+            }, {
+              _.parse[Importer].toEither.bimap(err => UnparseableArgument("import", err.toString), importer => Import(List(importer)))
+            }
+          ))
+        case other =>
+          CoreTarget.raiseError(UnparseableArgument("language", other))
+      }).fold[List[ReadSwagger[Target[List[WriteTree]]]]]({
         case MissingArg(args, Error.ArgName(arg)) =>
           println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
           throw new CodegenFailedException()
@@ -58,6 +68,7 @@ object Tasks {
           println(s"${AnsiColor.RED}Unknown framework specified: ${name}${AnsiColor.RESET}")
           throw new CodegenFailedException()
       }, _.toList)
+    })
 
     val (coreLogger, deferred) = result.runEmpty
 
@@ -91,12 +102,12 @@ object Tasks {
     tasks.flatMap(_.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
   }
 
-  private[this] def runM[L <: LA, F[_]](args: List[GuardrailPlugin.Args])(implicit C: CoreTerms[L, F]): Free[F, NonEmptyList[ReadSwagger[Target[List[WriteTree]]]]] = {
+  private[this] def runM[L <: LA, F[_]](args: NonEmptyList[ArgsImpl])(implicit C: CoreTerms[L, F]): Free[F, NonEmptyList[ReadSwagger[Target[List[WriteTree]]]]] = {
     import C._
 
     for {
       defaultFramework <- getDefaultFramework
-      args <- validateArgs(args)
+      args <- validateArgs(args.toList)
       writeTrees <- Common.processArgs(args)
     } yield writeTrees
   }
