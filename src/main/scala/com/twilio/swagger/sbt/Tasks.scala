@@ -7,7 +7,7 @@ import cats.free.Free
 import cats.implicits._
 import cats.~>
 import com.twilio.guardrail.core.CoreTermInterp
-import com.twilio.guardrail.languages.{ ScalaLanguage, LA }
+import com.twilio.guardrail.languages.{ JavaLanguage, ScalaLanguage, LA }
 import com.twilio.guardrail.terms.{CoreTerm, CoreTerms, GetDefaultFramework}
 import com.twilio.guardrail.{Args => ArgsImpl, Common, CoreTarget}
 import scala.io.AnsiColor
@@ -36,6 +36,19 @@ object Tasks {
 
     val result = preppedTasks.toList.flatTraverse({ case (language, args) =>
       (language match {
+        case "java" =>
+          runM[JavaLanguage, CoreTerm[JavaLanguage, ?]](args).foldMap(CoreTermInterp[JavaLanguage](
+            "dropwizard", {
+              case "dropwizard" => com.twilio.guardrail.generators.Java.Dropwizard
+            }, { str =>
+              import com.github.javaparser.JavaParser
+              import scala.util.{ Failure, Success, Try }
+              Try(JavaParser.parseImport(s"import ${str};")) match {
+                case Success(value) => Right(value)
+                case Failure(t)     => Left(UnparseableArgument("import", t.getMessage))
+              }
+            }
+          ))
         case "scala" =>
           runM[ScalaLanguage, CoreTerm[ScalaLanguage, ?]](args).foldMap(CoreTermInterp[ScalaLanguage](
             "akka-http", {

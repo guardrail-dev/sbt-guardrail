@@ -118,6 +118,21 @@ object GuardrailPlugin extends AutoPlugin {
       val kind = CodegenTargetImpl.Server
       val language = "scala"
     }
+
+    object JavaClient extends ClientServer {
+      val kind = CodegenTargetImpl.Client
+      val language = "java"
+    }
+
+    object JavaModels extends ClientServer {
+      val kind = CodegenTargetImpl.Models
+      val language = "java"
+    }
+
+    object JavaServer extends ClientServer {
+      val kind = CodegenTargetImpl.Server
+      val language = "java"
+    }
   }
 
   override lazy val projectSettings = Seq(
