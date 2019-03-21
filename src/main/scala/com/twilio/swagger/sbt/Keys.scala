@@ -7,10 +7,6 @@ import java.net.URL
 import _root_.sbt.{ SettingKey, TaskKey }
 import scala.language.implicitConversions
 
-import com.twilio.guardrail.{
-  Args => ArgsImpl
-}
-
 object Keys {
   sealed trait SwaggerConfigValue[T] { def toOption: Option[T] }
   def Default[T]: SwaggerConfigValue[T] = SwaggerConfigValue.Default()
@@ -22,7 +18,7 @@ object Keys {
   }
 
   val guardrailDefaults = SettingKey[Args]("guardrail-defaults")
-  val guardrailTasks = SettingKey[List[ArgsImpl]]("guardrail-tasks")
+  val guardrailTasks = SettingKey[List[GuardrailPlugin.Args]]("guardrail-tasks")
   val guardrail = TaskKey[Seq[File]](
     "guardrail",
     "Generate swagger sources"
