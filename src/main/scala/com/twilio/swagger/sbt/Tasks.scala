@@ -34,94 +34,43 @@ object Tasks {
       acc.updated(language, acc.get(language).fold(NonEmptyList.one(prepped))(_ :+ prepped))
     }
 
-    val result = preppedTasks.toList.flatTraverse({ case (language, args) =>
-      (language match {
-        case "java" =>
-          runM[JavaLanguage, CoreTerm[JavaLanguage, ?]](args).foldMap(CoreTermInterp[JavaLanguage](
-            "dropwizard", {
-              case "dropwizard" => com.twilio.guardrail.generators.Java.Dropwizard
-            }, { str =>
-              import com.github.javaparser.JavaParser
-              import scala.util.{ Failure, Success, Try }
-              Try(JavaParser.parseImport(s"import ${str};")) match {
-                case Success(value) => Right(value)
-                case Failure(t)     => Left(UnparseableArgument("import", t.getMessage))
-              }
-            }
-          ))
-        case "scala" =>
-          runM[ScalaLanguage, CoreTerm[ScalaLanguage, ?]](args).foldMap(CoreTermInterp[ScalaLanguage](
-            "akka-http", {
-              case "akka-http" => com.twilio.guardrail.generators.AkkaHttp
-              case "http4s"    => com.twilio.guardrail.generators.Http4s
-            }, {
-              _.parse[Importer].toEither.bimap(err => UnparseableArgument("import", err.toString), importer => Import(List(importer)))
-            }
-          ))
-        case other =>
-          CoreTarget.raiseError(UnparseableArgument("language", other))
-      }).fold[List[ReadSwagger[Target[List[WriteTree]]]]]({
-        case MissingArg(args, Error.ArgName(arg)) =>
-          println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
-          throw new CodegenFailedException()
-        case NoArgsSpecified =>
-          List.empty
-        case NoFramework =>
-          println(s"${AnsiColor.RED}No framework specified${AnsiColor.RESET}")
-          throw new CodegenFailedException()
-        case PrintHelp =>
-          List.empty
-        case UnknownArguments(args) =>
-          println(s"${AnsiColor.RED}Unknown arguments: ${args.mkString(" ")}${AnsiColor.RESET}")
-          throw new CodegenFailedException()
-        case UnparseableArgument(name, message) =>
-          println(s"${AnsiColor.RED}Unparseable argument ${name}: ${message}${AnsiColor.RESET}")
-          throw new CodegenFailedException()
-        case UnknownFramework(name) =>
-          println(s"${AnsiColor.RED}Unknown framework specified: ${name}${AnsiColor.RESET}")
-          throw new CodegenFailedException()
-      }, _.toList)
-    })
-
-    val (coreLogger, deferred) = result.runEmpty
-
-    val (logger, paths) = deferred
-      .traverse({ rs =>
-        ReadSwagger
-          .readSwagger(rs)
-          .fold(
-            { err =>
-              println(s"${AnsiColor.RED}${err}${AnsiColor.RESET}")
-              throw new CodegenFailedException()
-            },
-            _.fold(
-              {
-                case err =>
-                  println(s"${AnsiColor.RED}Error: ${err}${AnsiColor.RESET}")
-                  throw new CodegenFailedException()
-              },
-              _.map(WriteTree.unsafeWriteTree)
-            )
-          )
-      })
-      .map(_.flatten)
-      .runEmpty
+    val (logger, paths) =
+      CLI.guardrailRunner(_ => PartialFunction.empty)
+        .apply(preppedTasks)
+        .fold[List[java.nio.file.Path]]({
+          case MissingArg(args, Error.ArgName(arg)) =>
+            println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
+            throw new CodegenFailedException()
+          case NoArgsSpecified =>
+            List.empty
+          case NoFramework =>
+            println(s"${AnsiColor.RED}No framework specified${AnsiColor.RESET}")
+            throw new CodegenFailedException()
+          case PrintHelp =>
+            List.empty
+          case UnknownArguments(args) =>
+            println(s"${AnsiColor.RED}Unknown arguments: ${args.mkString(" ")}${AnsiColor.RESET}")
+            throw new CodegenFailedException()
+          case UnparseableArgument(name, message) =>
+            println(s"${AnsiColor.RED}Unparseable argument ${name}: ${message}${AnsiColor.RESET}")
+            throw new CodegenFailedException()
+          case UnknownFramework(name) =>
+            println(s"${AnsiColor.RED}Unknown framework specified: ${name}${AnsiColor.RESET}")
+            throw new CodegenFailedException()
+          case RuntimeFailure(message) =>
+            println(s"${AnsiColor.RED}Error:${AnsiColor.RESET}${message}")
+            throw new CodegenFailedException()
+          case UserError(message) =>
+            println(s"${AnsiColor.RED}Error:${AnsiColor.RESET}${message}")
+            throw new CodegenFailedException()
+        }, identity)
+        .runEmpty
 
     Thread.currentThread().setContextClassLoader(oldClassLoader)
-    paths.toList.map(_.toFile).distinct
+    paths.map(_.toFile).distinct
   }
 
   def watchSources(tasks: List[GuardrailPlugin.Args]): Seq[WatchSource] = {
     tasks.flatMap(_._2.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
-  }
-
-  private[this] def runM[L <: LA, F[_]](args: NonEmptyList[ArgsImpl])(implicit C: CoreTerms[L, F]): Free[F, NonEmptyList[ReadSwagger[Target[List[WriteTree]]]]] = {
-    import C._
-
-    for {
-      defaultFramework <- getDefaultFramework
-      args <- validateArgs(args.toList)
-      writeTrees <- Common.processArgs(args)
-    } yield writeTrees
   }
 }
