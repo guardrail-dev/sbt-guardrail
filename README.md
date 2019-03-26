@@ -21,9 +21,10 @@ addSbtPlugin("com.twilio" % "sbt-guardrail" % "<Please use the latest available 
     tracing: Boolean
 */
 guardrailTasks in Compile := List(
-  Client(file("petstore.yaml")),
-  Client(file("github.yaml"), pkg="com.example.clients.github"),
-  Server(file("myserver.yaml"), pkg="com.example.server", tracing=true),
-  Models(file("myserver.yaml"), pkg="com.example.models")
+  ScalaClient(file("petstore.yaml")),
+  ScalaClient(file("github.yaml"), pkg="com.example.clients.github"),
+  ScalaServer(file("myserver.yaml"), pkg="com.example.server", tracing=true),
+  ScalaModels(file("myserver.yaml"), pkg="com.example.models"),
+  JavaClient(file("github.yaml"), pkg="com.example.clients.github")
 )
 ```
