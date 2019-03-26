@@ -31,13 +31,13 @@ object GuardrailPlugin extends AutoPlugin {
         dtoPackage=dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList),
         imports=imports,
         context=ContextImpl.empty.copy(
-          framework=framework.orElse(Some("akka-http")),
           tracing=tracing.getOrElse(ContextImpl.empty.tracing)
         ))
     }
 
   sealed trait ClientServer {
     val kind: CodegenTargetImpl
+    val language: String
 
     def apply(
       specPath: java.io.File,
@@ -46,7 +46,7 @@ object GuardrailPlugin extends AutoPlugin {
       framework: Keys.SwaggerConfigValue[String] = Keys.Default,
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-    ): ArgsImpl = impl(
+    ): (Language, ArgsImpl) = (language, impl(
       kind = kind,
       specPath = Some(specPath),
       packageName = Some(pkg),
@@ -55,7 +55,7 @@ object GuardrailPlugin extends AutoPlugin {
       tracing = tracing.toOption,
       imports = imports.toOption.getOrElse(List.empty),
       defaults = false
-    )
+    ))
 
     def defaults(
       pkg: Keys.SwaggerConfigValue[String] = Keys.Default,
@@ -67,7 +67,7 @@ object GuardrailPlugin extends AutoPlugin {
       // Deprecated parameters
       packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
       dtoPackage: Keys.SwaggerConfigValue[String] = Keys.Default
-    ): ArgsImpl = impl(
+    ): (Language, ArgsImpl) = (language, impl(
       kind = kind,
       specPath = None,
       packageName = pkg.toOption.orElse(packageName.toOption),
@@ -76,7 +76,7 @@ object GuardrailPlugin extends AutoPlugin {
       tracing = tracing.toOption,
       imports = imports.toOption.getOrElse(List.empty),
       defaults = true
-    )
+    ))
   }
 
 
@@ -85,16 +85,52 @@ object GuardrailPlugin extends AutoPlugin {
     val guardrailTasks = Keys.guardrailTasks
     val guardrail = Keys.guardrail
 
+    @deprecated("0.45.0", "Please use ScalaClient instead")
     object Client extends ClientServer {
       val kind = CodegenTargetImpl.Client
+      val language = "scala"
     }
 
+    @deprecated("0.45.0", "Please use ScalaModels instead")
     object Models extends ClientServer {
       val kind = CodegenTargetImpl.Models
+      val language = "scala"
     }
 
+    @deprecated("0.45.0", "Please use ScalaServer instead")
     object Server extends ClientServer {
       val kind = CodegenTargetImpl.Server
+      val language = "scala"
+    }
+
+    object ScalaClient extends ClientServer {
+      val kind = CodegenTargetImpl.Client
+      val language = "scala"
+    }
+
+    object ScalaModels extends ClientServer {
+      val kind = CodegenTargetImpl.Models
+      val language = "scala"
+    }
+
+    object ScalaServer extends ClientServer {
+      val kind = CodegenTargetImpl.Server
+      val language = "scala"
+    }
+
+    object JavaClient extends ClientServer {
+      val kind = CodegenTargetImpl.Client
+      val language = "java"
+    }
+
+    object JavaModels extends ClientServer {
+      val kind = CodegenTargetImpl.Models
+      val language = "java"
+    }
+
+    object JavaServer extends ClientServer {
+      val kind = CodegenTargetImpl.Server
+      val language = "java"
     }
   }
 
@@ -110,8 +146,7 @@ object GuardrailPlugin extends AutoPlugin {
   )
 
   type Context = ContextImpl
-  val Context = ContextImpl
 
-  type Args = ArgsImpl
-  val Args = ArgsImpl
+  type Language = String
+  type Args = (Language, ArgsImpl)
 }
