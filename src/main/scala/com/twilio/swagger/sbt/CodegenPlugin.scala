@@ -31,6 +31,7 @@ object GuardrailPlugin extends AutoPlugin {
         dtoPackage=dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList),
         imports=imports,
         context=ContextImpl.empty.copy(
+          framework=framework,
           tracing=tracing.getOrElse(ContextImpl.empty.tracing)
         ))
     }
