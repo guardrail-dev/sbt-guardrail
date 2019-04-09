@@ -35,7 +35,7 @@ object Tasks {
     }
 
     val (logger, paths) =
-      CLI.guardrailRunner(_ => PartialFunction.empty)
+      CLI.guardrailRunner
         .apply(preppedTasks)
         .fold[List[java.nio.file.Path]]({
           case MissingArg(args, Error.ArgName(arg)) =>
