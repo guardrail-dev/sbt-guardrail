@@ -41,7 +41,7 @@ git.useGitDescribe := true
 
 // Dependencies
 resolvers += Resolver.bintrayRepo("twilio", "releases")
-libraryDependencies += "com.twilio" %% "guardrail" % "0.49.1"
+libraryDependencies += "com.twilio" %% "guardrail" % "0.49.2"
 
 // Release
 bintrayOrganization := Some("twilio")
