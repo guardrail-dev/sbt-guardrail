@@ -28,7 +28,7 @@ developers := List(
   )
 )
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.10"
 scalacOptions ++= List("-feature", "-Xexperimental")
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
