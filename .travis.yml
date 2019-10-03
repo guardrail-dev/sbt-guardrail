@@ -1,6 +1,6 @@
 language: scala
 scala:
-- 2.12.6
+- 2.12.10
 
 # Currently skip building on master. PR validation and release attempts are the gatekeepers for test validation.
 # This is only necessary currently as sbt-sonatype doesn't track which staging repo it uses,
