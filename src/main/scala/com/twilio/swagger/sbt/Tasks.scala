@@ -63,6 +63,15 @@ object Tasks {
           case UserError(message) =>
             println(s"${AnsiColor.RED}Error:${AnsiColor.RESET}${message}")
             throw new CodegenFailedException()
+          case MissingModule(section) =>
+            println(s"${AnsiColor.RED}Error: Missing module ${section}${AnsiColor.RESET}")
+            throw new CodegenFailedException()
+          case ModuleConflict(section) =>
+            println(s"${AnsiColor.RED}Error: Too many modules specified for ${section}${AnsiColor.RESET}")
+            throw new CodegenFailedException()
+          case UnconsumedModules(modules) =>
+            println(s"${AnsiColor.RED}Error: Unconsumed modules: ${modules.mkString(", ")}${AnsiColor.RESET}")
+            throw new CodegenFailedException()
         }, identity)
         .runEmpty
 
