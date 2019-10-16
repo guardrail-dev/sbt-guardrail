@@ -20,6 +20,7 @@ object GuardrailPlugin extends AutoPlugin {
       dtoPackage: Option[String],
       framework: Option[String],
       tracing: Option[Boolean],
+      modules: List[String],
       defaults: Boolean,
       imports: List[String]
     ): ArgsImpl = {
@@ -32,7 +33,8 @@ object GuardrailPlugin extends AutoPlugin {
         imports=imports,
         context=ContextImpl.empty.copy(
           framework=framework,
-          tracing=tracing.getOrElse(ContextImpl.empty.tracing)
+          tracing=tracing.getOrElse(ContextImpl.empty.tracing),
+          modules=modules
         ))
     }
 
@@ -46,6 +48,7 @@ object GuardrailPlugin extends AutoPlugin {
       dto: Keys.SwaggerConfigValue[String] = Keys.Default,
       framework: Keys.SwaggerConfigValue[String] = Keys.Default,
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
+      modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
     ): (Language, ArgsImpl) = (language, impl(
       kind = kind,
@@ -54,6 +57,7 @@ object GuardrailPlugin extends AutoPlugin {
       dtoPackage = dto.toOption,
       framework = framework.toOption,
       tracing = tracing.toOption,
+      modules = modules.toOption.getOrElse(List.empty),
       imports = imports.toOption.getOrElse(List.empty),
       defaults = false
     ))
@@ -63,6 +67,7 @@ object GuardrailPlugin extends AutoPlugin {
       dto: Keys.SwaggerConfigValue[String] = Keys.Default,
       framework: Keys.SwaggerConfigValue[String] = Keys.Default,
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
+      modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
 
       // Deprecated parameters
@@ -75,6 +80,7 @@ object GuardrailPlugin extends AutoPlugin {
       dtoPackage = dto.toOption.orElse(dtoPackage.toOption),
       framework = framework.toOption,
       tracing = tracing.toOption,
+      modules = modules.toOption.getOrElse(List.empty),
       imports = imports.toOption.getOrElse(List.empty),
       defaults = true
     ))
