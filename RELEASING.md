@@ -2,8 +2,5 @@
 
 2. Create a release tag: [link](https://github.com/twilio/sbt-guardrail/releases)
 
-3. Checkout the tag. This will cause `sbt version` to print out a non-SNAPSHOT version number
-
-4. `sbt publishBintray bintrayRelease` to stage artifacts
-
-5. `sbt publishSonatype sonatypeRelease` to release binary artifacts
+3. Once the tag is created, travis-ci will start building a release immediately.
+   Artifacts should be published to bintray and sonatype automatically.
