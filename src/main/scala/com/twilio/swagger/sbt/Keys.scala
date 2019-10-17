@@ -2,7 +2,6 @@ package com.twilio.guardrail
 package sbt
 
 import java.io.File
-import java.net.URL
 
 import _root_.sbt.{ SettingKey, TaskKey }
 import scala.language.implicitConversions

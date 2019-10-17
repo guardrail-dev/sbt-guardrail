@@ -18,7 +18,9 @@ addSbtPlugin("com.twilio" % "sbt-guardrail" % "<Please use the latest available 
     pkg: String
     dto: String
     framework: String
+    modules: List[String]
     tracing: Boolean
+    imports: List[String]
 */
 guardrailTasks in Compile := List(
   ScalaClient(file("petstore.yaml")),
@@ -26,5 +28,6 @@ guardrailTasks in Compile := List(
   ScalaServer(file("myserver.yaml"), pkg="com.example.server", tracing=true),
   ScalaModels(file("myserver.yaml"), pkg="com.example.models"),
   JavaClient(file("github.yaml"), pkg="com.example.clients.github")
+  ...
 )
 ```
