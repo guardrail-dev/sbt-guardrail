@@ -1,4 +1,4 @@
-sbtPlugin := true
+enablePlugins(SbtPlugin)
 
 name := "sbt-guardrail"
 organization := "com.twilio"
@@ -61,3 +61,7 @@ addCommandAlias(
   "publishSonatype",
   "; set publishTo := sonatypePublishTo.value; publishSigned"
 )
+
+scriptedLaunchOpts := { scriptedLaunchOpts.value ++
+  Seq("-Xmx1024M", "-XX:MaxPermSize=256M", "-Dplugin.version=" + version.value)
+}
