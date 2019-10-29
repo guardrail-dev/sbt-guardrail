@@ -4,6 +4,10 @@ $ absent target/scala-2.12/classes/com/example/clients/petstore/user/UserClient.
 > compile
 $ exists target/scala-2.12/src_managed/main/com/example/clients/petstore/user/UserClient.scala
 $ exists target/scala-2.12/classes/com/example/clients/petstore/user/UserClient.class
+$ exists target/scala-2.12/src_managed/main/com/example/servers/petstore/user/Routes.scala
+$ exists target/scala-2.12/classes/com/example/servers/petstore/user/UserHandler.class
 > compile
 $ exists target/scala-2.12/src_managed/main/com/example/clients/petstore/user/UserClient.scala
 $ exists target/scala-2.12/classes/com/example/clients/petstore/user/UserClient.class
+$ exists target/scala-2.12/src_managed/main/com/example/servers/petstore/user/Routes.scala
+$ exists target/scala-2.12/classes/com/example/servers/petstore/user/UserHandler.class
