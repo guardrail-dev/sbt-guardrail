@@ -14,7 +14,7 @@ import _root_.io.swagger.parser.SwaggerParserExtension
 class CodegenFailedException extends FeedbackProvidedException
 
 object Tasks {
-  def guardrailTask(tasks: List[GuardrailPlugin.Args], sourceDir: java.io.File): Seq[java.io.File] = {
+  def guardrailTask(tasks: List[Types.Args], sourceDir: java.io.File): Seq[java.io.File] = {
     // swagger-parser uses SPI to find extensions on the classpath (by default, only the OAPI2 -> OAPI3 converter)
     // See https://github.com/swagger-api/swagger-parser#extensions
     // That being said, Scala's classloader seems to have some issues finding SPI resources:
@@ -75,7 +75,7 @@ object Tasks {
     paths.map(_.toFile).distinct
   }
 
-  def watchSources(tasks: List[GuardrailPlugin.Args]): Seq[WatchSource] = {
+  def watchSources(tasks: List[Types.Args]): Seq[WatchSource] = {
     tasks.flatMap(_._2.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
   }
 }

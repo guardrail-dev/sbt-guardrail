@@ -50,7 +50,7 @@ object GuardrailPlugin extends AutoPlugin {
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
       modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-    ): (Language, ArgsImpl) = (language, impl(
+    ): Types.Args = (language, impl(
       kind = kind,
       specPath = Some(specPath),
       packageName = Some(pkg),
@@ -73,7 +73,7 @@ object GuardrailPlugin extends AutoPlugin {
       // Deprecated parameters
       packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
       dtoPackage: Keys.SwaggerConfigValue[String] = Keys.Default
-    ): (Language, ArgsImpl) = (language, impl(
+    ): Types.Args = (language, impl(
       kind = kind,
       specPath = None,
       packageName = pkg.toOption.orElse(packageName.toOption),
@@ -151,9 +151,4 @@ object GuardrailPlugin extends AutoPlugin {
     SbtKeys.watchSources in Compile ++= Tasks.watchSources((Keys.guardrailTasks in Compile).value),
     SbtKeys.watchSources in Test ++= Tasks.watchSources((Keys.guardrailTasks in Test).value),
   )
-
-  type Context = ContextImpl
-
-  type Language = String
-  type Args = (Language, ArgsImpl)
 }
