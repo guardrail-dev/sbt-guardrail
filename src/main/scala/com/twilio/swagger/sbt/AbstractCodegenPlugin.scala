@@ -9,7 +9,9 @@ import com.twilio.guardrail.{
   Context => ContextImpl
 }
 
-abstract class AbstractGuardrailPlugin extends AutoPlugin {
+abstract class AbstractGuardrailPlugin(
+  runner: Map[String,cats.data.NonEmptyList[com.twilio.guardrail.Args]] => com.twilio.guardrail.Target[List[java.nio.file.Path]]
+) extends AutoPlugin {
   override def requires = JvmPlugin
   override def trigger = allRequirements
 
@@ -144,8 +146,8 @@ abstract class AbstractGuardrailPlugin extends AutoPlugin {
   override lazy val projectSettings = Seq(
     Keys.guardrailTasks in Compile := List.empty,
     Keys.guardrailTasks in Test := List.empty,
-    Keys.guardrail in Compile := Tasks.guardrailTask((Keys.guardrailTasks in Compile).value, (SbtKeys.managedSourceDirectories in Compile).value.head),
-    Keys.guardrail in Test := Tasks.guardrailTask((Keys.guardrailTasks in Test).value, (SbtKeys.managedSourceDirectories in Test).value.head),
+    Keys.guardrail in Compile := Tasks.guardrailTask(runner)((Keys.guardrailTasks in Compile).value, (SbtKeys.managedSourceDirectories in Compile).value.head),
+    Keys.guardrail in Test := Tasks.guardrailTask(runner)((Keys.guardrailTasks in Test).value, (SbtKeys.managedSourceDirectories in Test).value.head),
     SbtKeys.sourceGenerators in Compile += (Keys.guardrail in Compile).taskValue,
     SbtKeys.sourceGenerators in Test += (Keys.guardrail in Test).taskValue,
     SbtKeys.watchSources in Compile ++= Tasks.watchSources((Keys.guardrailTasks in Compile).value),
