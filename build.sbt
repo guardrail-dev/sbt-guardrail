@@ -2,7 +2,7 @@ enablePlugins(SbtPlugin)
 
 name := "sbt-guardrail"
 organization := "com.twilio"
-description := "Principled code generation for Scala services from OpenAPI specifications, sbt plugin"
+description := "Principled code generation from OpenAPI specifications, sbt plugin"
 homepage := Some(url("https://github.com/twilio/sbt-guardrail"))
 licenses += ("MIT", url("https://github.com/twilio/guardrail/blob/master/LICENSE"))
 bintrayPackageLabels := Seq(
