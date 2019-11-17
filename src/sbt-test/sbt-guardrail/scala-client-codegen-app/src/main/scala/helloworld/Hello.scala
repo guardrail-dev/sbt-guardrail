@@ -6,10 +6,11 @@ import akka.stream.Materializer
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import cats.implicits._
+import com.example.clients.petstore.user.UserClient
 
 object Hello {
-  def main(args: Array[String]) = {
-    import com.example.clients.petstore.user.UserClient
+
+  def buildUserClient(): UserClient = {
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val server = buildServer()
@@ -17,15 +18,11 @@ object Hello {
     implicit val actorSys = ActorSystem()
     implicit val materializer = ActorMaterializer()
 
-    val userClient = UserClient.httpClient(server)
-    val result = userClient.getUserByName("billg")
-
-    System.out.println(result)
+    UserClient.httpClient(server)
   }
 
   private def buildServer(): HttpRequest => Future[HttpResponse] = {
     import com.example.servers.petstore.user._
-    import com.example.servers.petstore.{definitions => sdefs}
     import akka.http.scaladsl.server.Route
     import akka.http.scaladsl.settings.RoutingSettings
 
@@ -45,7 +42,6 @@ class DummyUserHandler
   import com.example.servers.petstore.user._
   import com.example.servers.petstore.definitions._
   import scala.collection._
-  import scala.concurrent.ExecutionContext.Implicits.global
 
   def createUser(respond: UserResource.createUserResponse.type)(body: User): scala.concurrent.Future[UserResource.createUserResponse] = ???
   def createUsersWithArrayInput(respond: UserResource.createUsersWithArrayInputResponse.type)(body: IndexedSeq[User]): scala.concurrent.Future[UserResource.createUsersWithArrayInputResponse] = ???
@@ -59,7 +55,7 @@ class DummyUserHandler
       firstName = Some("First"),
       lastName = Some("Last"),
       email = Some(username + "@example.com"))
-    Future { UserResource.getUserByNameResponseOK(user) }
+    Future.successful(UserResource.getUserByNameResponseOK(user))
   }
   def updateUser(respond: UserResource.updateUserResponse.type)(username: String, body: User): scala.concurrent.Future[UserResource.updateUserResponse] = ???
   def deleteUser(respond: UserResource.deleteUserResponse.type)(username: String): scala.concurrent.Future[UserResource.deleteUserResponse] = ???
