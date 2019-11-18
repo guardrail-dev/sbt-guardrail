@@ -1,0 +1,10 @@
+> clean
+$ absent target/scala-2.12/src_managed/main/com/example/clients/petstore/user/UserClient.java
+$ absent target/scala-2.12/classes/com/example/clients/petstore/user/UserClient.class
+> compile
+$ exists target/scala-2.12/src_managed/main/com/example/clients/petstore/user/UserClient.java
+$ exists target/scala-2.12/classes/com/example/clients/petstore/user/UserClient.class
+> compile
+$ exists target/scala-2.12/src_managed/main/com/example/clients/petstore/user/UserClient.java
+$ exists target/scala-2.12/classes/com/example/clients/petstore/user/UserClient.class
+> test
