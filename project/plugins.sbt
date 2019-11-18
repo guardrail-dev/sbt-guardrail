@@ -7,3 +7,5 @@ addSbtPlugin("io.crashbox" % "sbt-gpg" % "0.2.0")
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.8")
 
 addSbtPlugin("ohnosequences" % "sbt-github-release" % "0.7.0")
+
+libraryDependencies += "com.sun.activation" % "javax.activation" % "1.2.0"
