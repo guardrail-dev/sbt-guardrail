@@ -43,5 +43,5 @@ before_install:
 
 after_success:
 - if [ $TRAVIS_PULL_REQUEST = 'false' ] && [[ "$TRAVIS_TAG" = v* ]]; then
-    sbt ++$TRAVIS_SCALA_VERSION clean publishBintray bintrayRelease publishSonatype sonatypeClose sonatypeRelease;
+    sbt ++$TRAVIS_SCALA_VERSION clean publishBintray bintrayRelease publishSonatype sonatypeBundleRelease;
   fi

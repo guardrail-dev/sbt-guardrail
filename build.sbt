@@ -59,7 +59,7 @@ addCommandAlias(
 )
 addCommandAlias(
   "publishSonatype",
-  "; set publishTo := sonatypePublishTo.value; publish"
+  "; set publishTo := sonatypePublishToBundle.value; publish"
 )
 
 scriptedLaunchOpts := { scriptedLaunchOpts.value ++
