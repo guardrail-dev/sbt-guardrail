@@ -35,11 +35,11 @@ before_install:
     tar xv -C travis -f travis/local.secrets.tar;
   fi
 
- # From https://github.com/jodersky/sbt-gpg,
- before_script:
- - if [ $TRAVIS_PULL_REQUEST = 'false' ] && [[ "$TRAVIS_TAG" = v* ]]; then
-     gpg --import ./travis/local.secring.asc;
-   fi
+# From https://github.com/jodersky/sbt-gpg,
+before_script:
+- if [ $TRAVIS_PULL_REQUEST = 'false' ] && [[ "$TRAVIS_TAG" = v* ]]; then
+    gpg --import ./travis/local.secring.asc;
+  fi
 
 after_success:
 - if [ $TRAVIS_PULL_REQUEST = 'false' ] && [[ "$TRAVIS_TAG" = v* ]]; then
