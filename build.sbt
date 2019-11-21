@@ -55,11 +55,11 @@ publishMavenStyle := true
 
 addCommandAlias(
   "publishBintray",
-  "; set publishTo := (publishTo in bintray).value; publishSigned"
+  "; set publishTo := (publishTo in bintray).value; publish"
 )
 addCommandAlias(
   "publishSonatype",
-  "; set publishTo := sonatypePublishTo.value; publishSigned"
+  "; set publishTo := sonatypePublishToBundle.value; publish"
 )
 
 scriptedLaunchOpts := { scriptedLaunchOpts.value ++
