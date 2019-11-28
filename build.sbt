@@ -31,7 +31,7 @@ developers := List(
 scalaVersion := "2.12.10"
 scalacOptions ++= List("-feature", "-Xexperimental")
 
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.0")
+addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 
 // Versioning
 enablePlugins(GitBranchPrompt)
