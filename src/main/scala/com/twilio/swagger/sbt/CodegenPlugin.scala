@@ -1,4 +1,8 @@
 package com.twilio.guardrail
 package sbt
 
-object GuardrailPlugin extends AbstractGuardrailPlugin(CLI.guardrailRunner)
+import _root_.sbt.AutoPlugin
+
+object GuardrailPlugin extends AutoPlugin with AbstractGuardrailPlugin {
+  def runner = CLI.guardrailRunner
+}

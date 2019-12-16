@@ -9,9 +9,8 @@ import com.twilio.guardrail.{
   Context => ContextImpl
 }
 
-abstract class AbstractGuardrailPlugin(
-  runner: Map[String,cats.data.NonEmptyList[com.twilio.guardrail.Args]] => com.twilio.guardrail.Target[List[java.nio.file.Path]]
-) extends AutoPlugin {
+trait AbstractGuardrailPlugin { self: AutoPlugin =>
+  def runner: Map[String,cats.data.NonEmptyList[com.twilio.guardrail.Args]] => com.twilio.guardrail.Target[List[java.nio.file.Path]]
   override def requires = JvmPlugin
   override def trigger = allRequirements
 
