@@ -44,8 +44,8 @@ class DummyUserHandler
   import scala.collection._
 
   def createUser(respond: UserResource.createUserResponse.type)(body: User): scala.concurrent.Future[UserResource.createUserResponse] = ???
-  def createUsersWithArrayInput(respond: UserResource.createUsersWithArrayInputResponse.type)(body: IndexedSeq[User]): scala.concurrent.Future[UserResource.createUsersWithArrayInputResponse] = ???
-  def createUsersWithListInput(respond: UserResource.createUsersWithListInputResponse.type)(body: IndexedSeq[User]): scala.concurrent.Future[UserResource.createUsersWithListInputResponse] = ???
+  def createUsersWithArrayInput(respond: UserResource.createUsersWithArrayInputResponse.type)(body: Vector[User]): scala.concurrent.Future[UserResource.createUsersWithArrayInputResponse] = ???
+  def createUsersWithListInput(respond: UserResource.createUsersWithListInputResponse.type)(body: Vector[User]): scala.concurrent.Future[UserResource.createUsersWithListInputResponse] = ???
   def loginUser(respond: UserResource.loginUserResponse.type)(username: String, password: String): scala.concurrent.Future[UserResource.loginUserResponse] = ???
   def logoutUser(respond: UserResource.logoutUserResponse.type)(): scala.concurrent.Future[UserResource.logoutUserResponse] = ???
   def getUserByName(respond: UserResource.getUserByNameResponse.type)(username: String): scala.concurrent.Future[UserResource.getUserByNameResponse] = {
