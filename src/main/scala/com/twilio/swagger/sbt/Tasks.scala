@@ -30,7 +30,7 @@ object Tasks {
       acc.updated(language, acc.get(language).fold(NonEmptyList.one(prepped))(_ :+ prepped))
     }
 
-    val (logger, paths) =
+    val /*(logger,*/ paths/*)*/ =
       CLI.guardrailRunner
         .apply(preppedTasks)
         .fold[List[java.nio.file.Path]]({
@@ -69,7 +69,7 @@ object Tasks {
             println(s"${AnsiColor.RED}Error: Unconsumed modules: ${modules.mkString(", ")}${AnsiColor.RESET}")
             throw new CodegenFailedException()
         }, identity)
-        .runEmpty
+        //.runEmpty
 
     Thread.currentThread().setContextClassLoader(oldClassLoader)
     paths.map(_.toFile).distinct
