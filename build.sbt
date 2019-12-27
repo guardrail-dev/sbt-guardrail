@@ -1,25 +1,25 @@
 enablePlugins(SbtPlugin)
 
 name := "sbt-guardrail"
-organization := "com.twilio"
+organization in ThisBuild := "com.twilio"
 description := "Principled code generation from OpenAPI specifications, sbt plugin"
-homepage := Some(url("https://github.com/twilio/sbt-guardrail"))
-licenses += ("MIT", url("https://github.com/twilio/guardrail/blob/master/LICENSE"))
-bintrayPackageLabels := Seq(
+homepage in ThisBuild := Some(url("https://github.com/twilio/sbt-guardrail"))
+licenses in ThisBuild += ("MIT", url("https://github.com/twilio/guardrail/blob/master/LICENSE"))
+bintrayPackageLabels in ThisBuild := Seq(
   "codegen",
   "openapi",
   "swagger",
   "sbt"
 )
 
-scmInfo := Some(
+scmInfo in ThisBuild := Some(
   ScmInfo(
     url("https://github.com/twilio/sbt-guardrail"),
     "scm:git@github.com:twilio/sbt-guardrail.git"
   )
 )
 
-developers := List(
+developers in ThisBuild := List(
   Developer(
     id = "blast_hardcheese",
     name = "Devon Stewart",
@@ -28,10 +28,8 @@ developers := List(
   )
 )
 
-scalaVersion := "2.12.10"
-scalacOptions ++= List("-feature", "-Xexperimental")
-
-addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
+scalaVersion in ThisBuild := "2.12.10"
+scalacOptions in ThisBuild ++= List("-feature", "-Xexperimental")
 
 // Versioning
 enablePlugins(GitBranchPrompt)
@@ -39,29 +37,30 @@ enablePlugins(GitVersioning)
 git.useGitDescribe := true
 
 
-// Dependencies
-resolvers += Resolver.bintrayRepo("twilio", "releases")
-libraryDependencies += "com.twilio" %% "guardrail" % "0.55.4"
-
 // Release
-bintrayOrganization := Some("twilio")
-bintrayReleaseOnPublish := false
-bintrayRepository := {
+bintrayOrganization in ThisBuild := Some("twilio")
+bintrayReleaseOnPublish in ThisBuild := false
+bintrayRepository in ThisBuild := {
   if (isSnapshot.value) "snapshots"
   else "releases"
 }
 
-publishMavenStyle := true
+publishMavenStyle in ThisBuild := true
 
 addCommandAlias(
   "publishBintray",
-  "; set publishTo := (publishTo in bintray).value; publish"
+  "; set publishTo in ThisBuild := (publishTo in bintray).value ; core/publish ; publish"
 )
 addCommandAlias(
   "publishSonatype",
-  "; set publishTo := sonatypePublishToBundle.value; publish"
+  "; set publishTo in ThisBuild := sonatypePublishToBundle.value ; core/publish ; publish"
 )
 
 scriptedLaunchOpts := { scriptedLaunchOpts.value ++
   Seq("-Xmx1024M", "-XX:MaxPermSize=256M", "-Dplugin.version=" + version.value)
 }
+
+lazy val root = (project in file("."))
+  .dependsOn(core)
+
+lazy val core = (project in file("modules/core"))

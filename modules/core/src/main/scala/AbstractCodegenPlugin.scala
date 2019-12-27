@@ -88,7 +88,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
   }
 
 
-  object autoImport {
+  trait guardrailAutoImport {
     val guardrailDefaults = Keys.guardrailDefaults
     val guardrailTasks = Keys.guardrailTasks
     val guardrail = Keys.guardrail

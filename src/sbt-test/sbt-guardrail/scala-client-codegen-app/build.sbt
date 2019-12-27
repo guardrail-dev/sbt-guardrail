@@ -1,6 +1,3 @@
-
-enablePlugins(GuardrailPlugin)
-
 name := "sbt-guardrail-scala-client-test-app"
 
 version := "1.0." + System.currentTimeMillis
