@@ -7,4 +7,4 @@ addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 
 // Dependencies
 resolvers += Resolver.bintrayRepo("twilio", "releases")
-libraryDependencies += "com.twilio" %% "guardrail" % "0.54.5"
+libraryDependencies += "com.twilio" %% "guardrail" % "0.55.4"
