@@ -1,6 +1,3 @@
-
-enablePlugins(GuardrailPlugin)
-
 name := "sbt-guardrail-scala-client-test-app"
 
 version := "1.0." + System.currentTimeMillis
@@ -14,7 +11,7 @@ guardrailTasks in Compile := List(
   ScalaServer(file("petstore.json"), pkg="com.example.servers.petstore", imports=List("support.PositiveLong"))
 )
 
-val circeVersion = "0.11.1"
+val circeVersion = "0.13.0"
 
 libraryDependencies ++= Seq(
   "io.circe" %% "circe-core",

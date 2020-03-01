@@ -1,6 +1,3 @@
-
-enablePlugins(GuardrailPlugin)
-
 name := "sbt-guardrail-java-test-app"
 
 version := "1.0." + System.currentTimeMillis

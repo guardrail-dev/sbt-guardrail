@@ -17,7 +17,7 @@ object Keys {
   }
 
   val guardrailDefaults = SettingKey[Args]("guardrail-defaults")
-  val guardrailTasks = SettingKey[List[GuardrailPlugin.Args]]("guardrail-tasks")
+  val guardrailTasks = SettingKey[List[Types.Args]]("guardrail-tasks")
   val guardrail = TaskKey[Seq[File]](
     "guardrail",
     "Generate swagger sources"
