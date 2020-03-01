@@ -40,7 +40,7 @@ git.useGitDescribe := true
 // Release
 bintrayOrganization in ThisBuild := Some("twilio")
 bintrayReleaseOnPublish in ThisBuild := false
-bintrayRepository in ThisBuild := {
+bintrayRepository := {
   if (isSnapshot.value) "snapshots"
   else "releases"
 }
