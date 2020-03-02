@@ -1,43 +1,45 @@
 package com.twilio.guardrail
 package sbt
 
-import _root_.sbt.{Keys => SbtKeys, _}
+import java.nio.file.Path
+
+import _root_.sbt.nio.{Keys => NioKeys}
 import _root_.sbt.plugins.JvmPlugin
-import com.twilio.guardrail.{
-  Args => ArgsImpl,
-  CodegenTarget => CodegenTargetImpl,
-  Context => ContextImpl
-}
+import _root_.sbt.{Keys => SbtKeys, _}
+import cats.data.NonEmptyList
+import com.twilio.guardrail.{Args => ArgsImpl, CodegenTarget => CodegenTargetImpl, Context => ContextImpl}
 
 trait AbstractGuardrailPlugin { self: AutoPlugin =>
-  def runner: Map[String,cats.data.NonEmptyList[com.twilio.guardrail.Args]] => com.twilio.guardrail.CoreTarget[List[java.nio.file.Path]]
+  def runner: Map[String, NonEmptyList[ArgsImpl]] => com.twilio.guardrail.CoreTarget[List[Path]]
+
   override def requires = JvmPlugin
   override def trigger = allRequirements
 
   private[this] def impl(
-      kind: CodegenTargetImpl,
-      specPath: Option[java.io.File],
-      packageName: Option[String],
-      dtoPackage: Option[String],
-      framework: Option[String],
-      tracing: Option[Boolean],
-      modules: List[String],
-      defaults: Boolean,
-      imports: List[String]
-    ): ArgsImpl = {
-      ArgsImpl.empty.copy(
-        defaults=defaults,
-        kind=kind,
-        specPath=specPath.map(_.getPath),
-        packageName=packageName.map(_.split('.').toList),
-        dtoPackage=dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList),
-        imports=imports,
-        context=ContextImpl.empty.copy(
-          framework=framework,
-          tracing=tracing.getOrElse(ContextImpl.empty.tracing),
-          modules=modules
-        ))
-    }
+    kind: CodegenTargetImpl,
+    specPath: Option[java.io.File],
+    packageName: Option[String],
+    dtoPackage: Option[String],
+    framework: Option[String],
+    tracing: Option[Boolean],
+    modules: List[String],
+    defaults: Boolean,
+    imports: List[String]
+  ): Types.PluginArgs =
+    Types.PluginArgs(
+      kind = kind,
+      specPath = specPath,
+      outputPath = None,
+      packageName = packageName.map(_.split('.').toList),
+      dtoPackage = dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList),
+      context = ContextImpl.empty.copy(
+        framework = framework,
+        tracing = tracing.getOrElse(ContextImpl.empty.tracing),
+        modules = modules
+      ),
+      defaults = defaults,
+      imports = imports
+    )
 
   sealed trait ClientServer {
     val kind: CodegenTargetImpl
@@ -142,14 +144,19 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
     }
   }
 
-  override lazy val projectSettings = Seq(
-    Keys.guardrailTasks in Compile := List.empty,
-    Keys.guardrailTasks in Test := List.empty,
-    Keys.guardrail in Compile := Tasks.guardrailTask(runner)((Keys.guardrailTasks in Compile).value, (SbtKeys.managedSourceDirectories in Compile).value.head),
-    Keys.guardrail in Test := Tasks.guardrailTask(runner)((Keys.guardrailTasks in Test).value, (SbtKeys.managedSourceDirectories in Test).value.head),
-    SbtKeys.sourceGenerators in Compile += (Keys.guardrail in Compile).taskValue,
-    SbtKeys.sourceGenerators in Test += (Keys.guardrail in Test).taskValue,
-    SbtKeys.watchSources in Compile ++= Tasks.watchSources((Keys.guardrailTasks in Compile).value),
-    SbtKeys.watchSources in Test ++= Tasks.watchSources((Keys.guardrailTasks in Test).value),
+  override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(Compile, Test).flatMap(conf =>
+    Seq(
+      conf / Keys.guardrailTasks := List.empty,
+      conf / Keys.guardrail / NioKeys.fileInputs := (conf / Keys.guardrailTasks).value.flatMap(_._2.specPath).map(_.toPath.toAbsolutePath.toGlob),
+      conf / Keys.guardrail := {
+        val tasks = (conf / Keys.guardrailTasks).value
+        val sourceDir = (conf / SbtKeys.sourceManaged).value
+        val changes = (conf / Keys.guardrail).inputFileChanges
+        if (!sourceDir.exists() || changes.hasChanges) Tasks.guardrailTask(runner)(tasks, sourceDir)
+        else (sourceDir ** "*.scala" +++ sourceDir ** "*.java").get()
+      },
+      conf / SbtKeys.sourceGenerators += (conf / Keys.guardrail).taskValue,
+      conf / SbtKeys.watchSources ++= Tasks.watchSources((conf / Keys.guardrailTasks).value)
+    )
   )
 }
