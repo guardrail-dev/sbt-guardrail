@@ -4,7 +4,7 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
 
 addSbtPlugin("io.crashbox" % "sbt-gpg" % "0.2.1")
 
-addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.8.1")
+addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.1")
 
 addSbtPlugin("ohnosequences" % "sbt-github-release" % "0.7.0")
 
