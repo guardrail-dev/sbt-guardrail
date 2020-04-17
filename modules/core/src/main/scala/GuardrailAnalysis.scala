@@ -10,7 +10,12 @@ case class GuardrailAnalysis(products: List[java.io.File]) {
     GuardrailAnalysis(products ++ that.products)
 }
 object GuardrailAnalysis {
+
+  private val from: (List[java.io.File] :*: LNil) => GuardrailAnalysis = {
+    case ((_, in) :*: LNil) => GuardrailAnalysis(in)
+  }
+
   implicit val analysisIso = LList.iso(
     { a: GuardrailAnalysis => ("products", a.products) :*: LNil },
-    { in: List[java.io.File] :*: LNil => GuardrailAnalysis(in._1) })
+    { from })
 }
