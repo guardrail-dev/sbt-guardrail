@@ -15,7 +15,7 @@ class CodegenFailedException extends FeedbackProvidedException
 
 object Tasks {
   def guardrailTask(
-    runner: Map[String,cats.data.NonEmptyList[com.twilio.guardrail.Args]] => com.twilio.guardrail.CoreTarget[List[java.nio.file.Path]]
+    runner: Map[String,cats.data.NonEmptyList[com.twilio.guardrail.Args]] => com.twilio.guardrail.Target[List[java.nio.file.Path]]
   )(tasks: List[Types.Args], sourceDir: java.io.File): Seq[java.io.File] = {
     // swagger-parser uses SPI to find extensions on the classpath (by default, only the OAPI2 -> OAPI3 converter)
     // See https://github.com/swagger-api/swagger-parser#extensions
