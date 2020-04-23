@@ -2,8 +2,7 @@ package com.twilio.guardrail
 package sbt
 
 import _root_.sbt.{FeedbackProvidedException, WatchSource}
-import cats.data.{EitherT, NonEmptyList, WriterT}
-import cats.free.Free
+import cats.data.NonEmptyList
 import cats.implicits._
 import cats.~>
 import com.twilio.guardrail.{Args => ArgsImpl}
