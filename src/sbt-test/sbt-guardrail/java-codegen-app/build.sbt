@@ -11,7 +11,7 @@ guardrailTasks in Compile := List(
 )
 
 // workaround for SBT issue.  see: https://github.com/sbt/sbt/issues/1664
-unmanagedSourceDirectories in Compile += (sourceManaged in Compile).value
+managedSourceDirectories in Compile += (sourceManaged in Compile).value
 
 val jacksonVersion = "2.10.1"
 
