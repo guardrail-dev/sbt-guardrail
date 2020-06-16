@@ -3,6 +3,7 @@ package sbt
 
 import _root_.sbt.{Keys => SbtKeys, _}
 import _root_.sbt.plugins.JvmPlugin
+import com.twilio.guardrail.protocol.terms.protocol.PropertyRequirement
 import com.twilio.guardrail.{
   Args => ArgsImpl,
   CodegenTarget => CodegenTargetImpl,
@@ -23,7 +24,8 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing: Option[Boolean],
       modules: List[String],
       defaults: Boolean,
-      imports: List[String]
+      imports: List[String],
+      propertyRequirement: Option[PropertyRequirement.Configured]
     ): ArgsImpl = {
       ArgsImpl.empty.copy(
         defaults=defaults,
@@ -35,7 +37,8 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
         context=ContextImpl.empty.copy(
           framework=framework,
           tracing=tracing.getOrElse(ContextImpl.empty.tracing),
-          modules=modules
+          modules=modules,
+          propertyRequirement=propertyRequirement.getOrElse(ContextImpl.empty.propertyRequirement)
         ))
     }
 
@@ -51,6 +54,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
       modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
+      propertyRequirement: Keys.SwaggerConfigValue[PropertyRequirement.Configured] = Keys.Default
     ): Types.Args = (language, impl(
       kind = kind,
       specPath = Some(specPath),
@@ -60,6 +64,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing = tracing.toOption,
       modules = modules.toOption.getOrElse(List.empty),
       imports = imports.toOption.getOrElse(List.empty),
+      propertyRequirement = propertyRequirement.toOption,
       defaults = false
     ))
 
@@ -70,6 +75,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
       modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
+      propertyRequirement: Keys.SwaggerConfigValue[PropertyRequirement.Configured] = Keys.Default,
 
       // Deprecated parameters
       packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
@@ -83,10 +89,10 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing = tracing.toOption,
       modules = modules.toOption.getOrElse(List.empty),
       imports = imports.toOption.getOrElse(List.empty),
+      propertyRequirement = propertyRequirement.toOption,
       defaults = true
     ))
   }
-
 
   trait guardrailAutoImport {
     val guardrailDefaults = Keys.guardrailDefaults
@@ -147,7 +153,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
 
         def calcResult() =
           GuardrailAnalysis(Tasks.guardrailTask(runner)(tasks, sources).toList)
-        
+
         val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.make("last")) {
           (_, prev) =>
           val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.make("input")) {

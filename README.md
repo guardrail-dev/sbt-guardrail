@@ -21,10 +21,14 @@ addSbtPlugin("com.twilio" % "sbt-guardrail" % "<Please use the latest available 
     modules: List[String]
     tracing: Boolean
     imports: List[String]
+    propertyRequirement: PropertyRequirement.Configured
 */
 guardrailTasks in Compile := List(
   ScalaClient(file("petstore.yaml")),
   ScalaClient(file("github.yaml"), pkg="com.example.clients.github"),
+  ScalaClient(file("github.yaml"), pkg="com.example.clients.github", 
+              propertyRequirement = PropertyRequirement.Configured(PropertyRequirement.Optional, 
+                                                                   PropertyRequirement.Optional)),
   ScalaServer(file("myserver.yaml"), pkg="com.example.server", tracing=true),
   ScalaModels(file("myserver.yaml"), pkg="com.example.models"),
   JavaClient(file("github.yaml"), pkg="com.example.clients.github")
