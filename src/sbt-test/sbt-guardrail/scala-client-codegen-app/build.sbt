@@ -7,8 +7,8 @@ scalaVersion := "2.12.10"
 scalacOptions += "-Xexperimental"
 
 guardrailTasks in Compile := List(
-  ScalaClient(file("petstore.json"), pkg="com.example.clients.petstore", imports=List("support.PositiveLong")),
-  ScalaServer(file("petstore.json"), pkg="com.example.servers.petstore", imports=List("support.PositiveLong"))
+  ScalaClient(file("petstore.json"), pkg="com.example.clients.petstore", imports=List("_root_.support.PositiveLong")),
+  ScalaServer(file("petstore.json"), pkg="com.example.servers.petstore", imports=List("_root_.support.PositiveLong"))
 )
 
 val circeVersion = "0.13.0"
