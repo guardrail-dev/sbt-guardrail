@@ -25,8 +25,19 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       modules: List[String],
       defaults: Boolean,
       imports: List[String],
-      propertyRequirement: Option[PropertyRequirement.Configured]
+      encodeOptionalAs: Option[CodingConfig],
+      decodeOptionalAs: Option[CodingConfig]
     ): ArgsImpl = {
+      val propertyRequirement = (encodeOptionalAs, decodeOptionalAs) match {
+        case (None, None)       => ContextImpl.empty.propertyRequirement
+        case (encoder, decoder) =>
+          val fallback = ContextImpl.empty.propertyRequirement
+          PropertyRequirement.Configured(
+            encoder.fold(fallback.encoder)(_.toOptionalRequirement),
+            decoder.fold(fallback.decoder)(_.toOptionalRequirement)
+          )
+      }
+
       ArgsImpl.empty.copy(
         defaults=defaults,
         kind=kind,
@@ -38,7 +49,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
           framework=framework,
           tracing=tracing.getOrElse(ContextImpl.empty.tracing),
           modules=modules,
-          propertyRequirement=propertyRequirement.getOrElse(ContextImpl.empty.propertyRequirement)
+          propertyRequirement=propertyRequirement
         ))
     }
 
@@ -54,7 +65,8 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
       modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-      propertyRequirement: Keys.SwaggerConfigValue[PropertyRequirement.Configured] = Keys.Default
+      encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
+      decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default
     ): Types.Args = (language, impl(
       kind = kind,
       specPath = Some(specPath),
@@ -64,7 +76,8 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing = tracing.toOption,
       modules = modules.toOption.getOrElse(List.empty),
       imports = imports.toOption.getOrElse(List.empty),
-      propertyRequirement = propertyRequirement.toOption,
+      encodeOptionalAs = encodeOptionalAs.toOption,
+      decodeOptionalAs = decodeOptionalAs.toOption,
       defaults = false
     ))
 
@@ -75,7 +88,8 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
       modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-      propertyRequirement: Keys.SwaggerConfigValue[PropertyRequirement.Configured] = Keys.Default,
+      encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
+      decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
 
       // Deprecated parameters
       packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
@@ -89,7 +103,8 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       tracing = tracing.toOption,
       modules = modules.toOption.getOrElse(List.empty),
       imports = imports.toOption.getOrElse(List.empty),
-      propertyRequirement = propertyRequirement.toOption,
+      encodeOptionalAs = encodeOptionalAs.toOption,
+      decodeOptionalAs = decodeOptionalAs.toOption,
       defaults = true
     ))
   }
