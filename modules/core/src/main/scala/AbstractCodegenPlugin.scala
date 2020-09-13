@@ -26,7 +26,8 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       defaults: Boolean,
       imports: List[String],
       encodeOptionalAs: Option[CodingConfig],
-      decodeOptionalAs: Option[CodingConfig]
+      decodeOptionalAs: Option[CodingConfig],
+      customExtraction: Option[Boolean],
     ): ArgsImpl = {
       val propertyRequirement = (encodeOptionalAs, decodeOptionalAs) match {
         case (None, None)       => ContextImpl.empty.propertyRequirement
@@ -46,6 +47,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
         dtoPackage=dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList),
         imports=imports,
         context=ContextImpl.empty.copy(
+          customExtraction=customExtraction.getOrElse(ContextImpl.empty.customExtraction),
           framework=framework,
           tracing=tracing.getOrElse(ContextImpl.empty.tracing),
           modules=modules,
@@ -66,7 +68,8 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
-      decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default
+      decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
+      customExtraction: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
     ): Types.Args = (language, impl(
       kind = kind,
       specPath = Some(specPath),
@@ -78,6 +81,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       imports = imports.toOption.getOrElse(List.empty),
       encodeOptionalAs = encodeOptionalAs.toOption,
       decodeOptionalAs = decodeOptionalAs.toOption,
+      customExtraction = customExtraction.toOption,
       defaults = false
     ))
 
@@ -90,6 +94,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
       encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
+      customExtraction: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
 
       // Deprecated parameters
       packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
@@ -105,6 +110,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       imports = imports.toOption.getOrElse(List.empty),
       encodeOptionalAs = encodeOptionalAs.toOption,
       decodeOptionalAs = decodeOptionalAs.toOption,
+      customExtraction = customExtraction.toOption,
       defaults = true
     ))
   }
