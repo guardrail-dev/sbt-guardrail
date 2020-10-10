@@ -196,14 +196,14 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       cachedResult(()).products
   }
 
-  override lazy val projectSettings = Seq(
-    Keys.guardrailTasks in Compile := List.empty,
-    Keys.guardrailTasks in Test := List.empty,
-    Keys.guardrail in Compile := cachedGuardrailTask(_root_.sbt.Keys.streams.value)((Keys.guardrailTasks in Compile).value, (SbtKeys.managedSourceDirectories in Compile).value),
-    Keys.guardrail in Test := cachedGuardrailTask(_root_.sbt.Keys.streams.value)((Keys.guardrailTasks in Test).value, (SbtKeys.managedSourceDirectories in Test).value),
-    SbtKeys.sourceGenerators in Compile += (Keys.guardrail in Compile).taskValue,
-    SbtKeys.sourceGenerators in Test += (Keys.guardrail in Test).taskValue,
-    SbtKeys.watchSources in Compile ++= Tasks.watchSources((Keys.guardrailTasks in Compile).value),
-    SbtKeys.watchSources in Test ++= Tasks.watchSources((Keys.guardrailTasks in Test).value),
+  def scopedSettings(scope: Configuration) = Seq(
+    Keys.guardrailTasks in scope := List.empty,
+    Keys.guardrail in scope := cachedGuardrailTask(_root_.sbt.Keys.streams.value)((Keys.guardrailTasks in scope).value, (SbtKeys.managedSourceDirectories in scope).value),
+    SbtKeys.sourceGenerators in scope += (Keys.guardrail in scope).taskValue,
+    SbtKeys.watchSources in scope ++= Tasks.watchSources((Keys.guardrailTasks in scope).value),
   )
+
+  override lazy val projectSettings = {
+    scopedSettings(Compile) ++ scopedSettings(Test)
+  }
 }
