@@ -4,6 +4,7 @@ package helloworld
 import org.scalatest._
 import cats.implicits._
 import com.example.clients.petstore.user.GetUserByNameResponse
+import com.example.tests.clients.petstore.user.{ GetUserByNameResponse => MustExist }
 import org.scalatest.concurrent.ScalaFutures
 
 import scala.concurrent.ExecutionContext.Implicits.global
