@@ -175,9 +175,9 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
         def calcResult() =
           GuardrailAnalysis(Tasks.guardrailTask(runner)(tasks, sources.head).toList)
 
-        val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub(kind).make("last")) {
+        val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("last")) {
           (_, prev) =>
-          val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.sub(kind).make("input")) {
+          val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("input")) {
             (changed: Boolean, in: String) =>
               prev match {
                 case None => calcResult()
