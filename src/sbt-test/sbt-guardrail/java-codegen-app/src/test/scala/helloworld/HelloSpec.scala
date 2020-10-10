@@ -17,6 +17,6 @@ class HelloSpec extends FlatSpec
       val logoutResponse = future.get(10, TimeUnit.SECONDS)
       future.isDone shouldBe true
       future.isCompletedExceptionally shouldBe false
-      logoutResponse.getClass shouldBe classOf[LogoutUserResponse.Ok]
+      logoutResponse.getClass shouldBe classOf[LogoutUserResponse.Found]
   }
 }

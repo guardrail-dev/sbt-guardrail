@@ -11,6 +11,11 @@ guardrailTasks in Compile := List(
   ScalaServer(file("petstore.json"), pkg="com.example.servers.petstore", imports=List("_root_.support.PositiveLong"))
 )
 
+guardrailTasks in Test := List(
+  ScalaClient(file("petstore.json"), pkg="com.example.tests.clients.petstore", imports=List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._")),
+  ScalaServer(file("petstore.json"), pkg="com.example.tests.servers.petstore", imports=List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._"))
+)
+
 val circeVersion = "0.13.0"
 
 libraryDependencies ++= Seq(

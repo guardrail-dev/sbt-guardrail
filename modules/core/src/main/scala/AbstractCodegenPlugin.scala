@@ -169,15 +169,15 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
     }
   }
 
-  private def cachedGuardrailTask(streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: java.io.File) = {
+  private def cachedGuardrailTask(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
         import _root_.sbt.util.CacheImplicits._
 
         def calcResult() =
-          GuardrailAnalysis(Tasks.guardrailTask(runner)(tasks, sources).toList)
+          GuardrailAnalysis(Tasks.guardrailTask(runner)(tasks, sources.head).toList)
 
-        val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.make("last")) {
+        val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("last")) {
           (_, prev) =>
-          val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.make("input")) {
+          val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("input")) {
             (changed: Boolean, in: String) =>
               prev match {
                 case None => calcResult()
@@ -196,14 +196,14 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
       cachedResult(()).products
   }
 
-  override lazy val projectSettings = Seq(
-    Keys.guardrailTasks in Compile := List.empty,
-    Keys.guardrailTasks in Test := List.empty,
-    Keys.guardrail in Compile := cachedGuardrailTask(_root_.sbt.Keys.streams.value)((Keys.guardrailTasks in Compile).value, (SbtKeys.managedSourceDirectories in Compile).value.head),
-    Keys.guardrail in Test := cachedGuardrailTask(_root_.sbt.Keys.streams.value)((Keys.guardrailTasks in Test).value, (SbtKeys.managedSourceDirectories in Test).value.head),
-    SbtKeys.sourceGenerators in Compile += (Keys.guardrail in Compile).taskValue,
-    SbtKeys.sourceGenerators in Test += (Keys.guardrail in Test).taskValue,
-    SbtKeys.watchSources in Compile ++= Tasks.watchSources((Keys.guardrailTasks in Compile).value),
-    SbtKeys.watchSources in Test ++= Tasks.watchSources((Keys.guardrailTasks in Test).value),
+  def scopedSettings(name: String, scope: Configuration) = Seq(
+    Keys.guardrailTasks in scope := List.empty,
+    Keys.guardrail in scope := cachedGuardrailTask(name, _root_.sbt.Keys.streams.value)((Keys.guardrailTasks in scope).value, (SbtKeys.managedSourceDirectories in scope).value),
+    SbtKeys.sourceGenerators in scope += (Keys.guardrail in scope).taskValue,
+    SbtKeys.watchSources in scope ++= Tasks.watchSources((Keys.guardrailTasks in scope).value),
   )
+
+  override lazy val projectSettings = {
+    scopedSettings("compile", Compile) ++ scopedSettings("test", Test)
+  }
 }

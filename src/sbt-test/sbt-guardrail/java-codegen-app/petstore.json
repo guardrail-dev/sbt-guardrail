@@ -862,6 +862,8 @@
         "responses": {
           "200": {
             "description": "successful operation"
+          }, "302": {
+            "description": "It's a real web service and this is what they really return"
           }
         }
       }
