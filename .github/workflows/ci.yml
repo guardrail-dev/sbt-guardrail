@@ -46,8 +46,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - name: Compile
-        run: sbt compile
       - name: Publish artifacts
         run: sbt ci-release
         env:
