@@ -34,7 +34,7 @@ before_script:
     gpg --import ./travis/local.secring.asc;
   fi
 
-after_success:
-- if [ $TRAVIS_PULL_REQUEST = 'false' ] && [[ "$TRAVIS_TAG" = v* ]]; then
-    sbt ++$TRAVIS_SCALA_VERSION clean publishBintray core/bintrayRelease bintrayRelease publishSonatype sonatypeBundleRelease;
-  fi
+# after_success:
+# - if [ $TRAVIS_PULL_REQUEST = 'false' ] && [[ "$TRAVIS_TAG" = v* ]]; then
+#     sbt ++$TRAVIS_SCALA_VERSION clean publishBintray core/bintrayRelease bintrayRelease publishSonatype sonatypeBundleRelease;
+#   fi
