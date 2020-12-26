@@ -10,10 +10,8 @@
 # Extract library version
 version="$(grep -ho 'com\.twilio" %% "guardrail" % "[^"]*"' modules/core/build.sbt | grep -ho '\([0-9]\+\)\(\.[0-9]\+\)\{1,\}')"
 
+exists=0
 # Check to see if we've already released for this library version
 if git rev-parse "v${version}" >/dev/null 2>&1; then
-  # Do not auto-release
-  exit 1
+  exists=1
 fi
-
-echo "$version"
