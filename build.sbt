@@ -30,6 +30,14 @@ enablePlugins(GitBranchPrompt)
 enablePlugins(GitVersioning)
 git.useGitDescribe := true
 
+git.gitDescribedVersion := git.gitDescribedVersion(v => {
+  import scala.sys.process._
+  val nativeGitDescribeResult = ("git describe --tags HEAD" !!).trim
+  git.defaultTagByVersionStrategy(nativeGitDescribeResult)
+}).value
+
+git.gitUncommittedChanges := git.gitCurrentTags.value.isEmpty
+
 // Release
 publishMavenStyle in ThisBuild := true
 
