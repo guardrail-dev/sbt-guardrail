@@ -5,12 +5,6 @@ organization in ThisBuild := "com.twilio"
 description := "Principled code generation from OpenAPI specifications, sbt plugin"
 homepage in ThisBuild := Some(url("https://github.com/twilio/sbt-guardrail"))
 licenses in ThisBuild += ("MIT", url("https://github.com/twilio/guardrail/blob/master/LICENSE"))
-bintrayPackageLabels in ThisBuild := Seq(
-  "codegen",
-  "openapi",
-  "swagger",
-  "sbt"
-)
 
 scmInfo in ThisBuild := Some(
   ScmInfo(
@@ -36,21 +30,9 @@ enablePlugins(GitBranchPrompt)
 enablePlugins(GitVersioning)
 git.useGitDescribe := true
 
-
 // Release
-bintrayOrganization in ThisBuild := Some("twilio")
-bintrayReleaseOnPublish in ThisBuild := false
-bintrayRepository := {
-  if (isSnapshot.value) "snapshots"
-  else "releases"
-}
-
 publishMavenStyle in ThisBuild := true
 
-addCommandAlias(
-  "publishBintray",
-  "; set publishTo := (publishTo in (core, bintray)).value; set publishTo := (publishTo in bintray).value ; core/publish ; publish"
-)
 addCommandAlias(
   "publishSonatype",
   "; set publishTo := sonatypePublishToBundle.value ; set publishTo in core := sonatypePublishToBundle.value ; core/publish ; publish"

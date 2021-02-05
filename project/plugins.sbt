@@ -1,5 +1,3 @@
-addSbtPlugin("org.foundweekends" % "sbt-bintray" % "0.6.1")
-
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
 
 addSbtPlugin("org.xerial.sbt" % "sbt-sonatype" % "3.9.5")

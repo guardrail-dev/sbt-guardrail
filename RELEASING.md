@@ -5,4 +5,4 @@
 3. Create a release tag: [link](https://github.com/twilio/sbt-guardrail/releases)
 
 4. Once the tag is created, travis-ci will start building a release immediately.
-   Artifacts should be published to bintray and sonatype automatically.
+   Artifacts should be published to sonatype automatically.
