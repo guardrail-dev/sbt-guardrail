@@ -4,10 +4,6 @@ on:
   pull_request:
     branches:
       - master
-  push:
-    branches:
-      - master
-    tags: [v*]
 
 jobs:
   build:
@@ -32,31 +28,3 @@ jobs:
           ${{ runner.os }}-scala-${{ matrix.scala }}-
     - name: Run tests
       run:  sbt ++${{ matrix.scala }} "^ test; scripted"
-  publish:
-    name: Publish release
-    needs: [build]
-    if: github.event_name != 'pull_request' && (startsWith(github.ref, 'refs/tags/v'))
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: print GnuPG version
-        run: gpg --version
-      - name: Set up JDK 8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-      - name: Publish artifacts
-        run: sbt ci-release
-        env:
-          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
-          PGP_SECRET: ${{ secrets.PGP_SECRET }}
-          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
-          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-      - name: Cleanup
-        run: |
-          rm -rf "$HOME/.ivy2/local" || true
-          find $HOME/.ivy2/cache                       -name "ivydata-*.properties" -delete || true
-          find $HOME/.ivy2/cache                       -name "*-LM-SNAPSHOT*"       -delete || true
-          find $HOME/.cache/coursier/v1                -name "ivydata-*.properties" -delete || true
-          find $HOME/.sbt                              -name "*.lock"               -delete || true
