@@ -61,8 +61,5 @@ scriptedDependencies := {
 lazy val root = (project in file("."))
   .dependsOn(core)
   .aggregate(core)
-  .settings(
-    skip in publish := true
-  )
 
 lazy val core = (project in file("modules/core"))
