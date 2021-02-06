@@ -41,11 +41,6 @@ git.gitUncommittedChanges := git.gitCurrentTags.value.isEmpty
 // Release
 publishMavenStyle in ThisBuild := true
 
-addCommandAlias(
-  "publishSonatype",
-  "; set publishTo := sonatypePublishToBundle.value ; set publishTo in core := sonatypePublishToBundle.value ; core/publish ; publish"
-)
-
 scriptedLaunchOpts := { scriptedLaunchOpts.value ++
   Seq("-Xmx1024M", "-XX:MaxPermSize=256M", "-Dplugin.version=" + version.value)
 }
