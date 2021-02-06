@@ -60,5 +60,6 @@ scriptedDependencies := {
 
 lazy val root = (project in file("."))
   .dependsOn(core)
+  .aggregate(core)
 
 lazy val core = (project in file("modules/core"))
