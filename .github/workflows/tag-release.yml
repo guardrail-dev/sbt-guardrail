@@ -38,7 +38,6 @@ jobs:
       if: steps.guessversion.outputs.exists == 0
       uses: release-drafter/release-drafter@v5
       with:
-        publish: true
         name: "v${{ env.VERSION }}"
         tag: "v${{ env.VERSION }}"
         version: "v${{ env.VERSION }}"
