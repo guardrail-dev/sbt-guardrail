@@ -22,7 +22,7 @@ developers in ThisBuild := List(
   )
 )
 
-scalaVersion in ThisBuild := "2.12.13"
+scalaVersion in ThisBuild := "2.13.6"
 scalacOptions in ThisBuild ++= List("-feature", "-Xexperimental")
 
 // Versioning
