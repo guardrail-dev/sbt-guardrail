@@ -190,7 +190,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
 
           val inputs = tasks.flatMap(_._2.specPath.map( x => (FileInfo.hash(new java.io.File(x)))))
 
-          tracker(new String(inputs.flatMap(_.hash).toArray))
+          tracker(new String(inputs.flatMap(_.hash).toArray) + Versions.guardrailVersion)
         }
 
       cachedResult(()).products
