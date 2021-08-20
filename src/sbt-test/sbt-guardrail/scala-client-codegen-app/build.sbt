@@ -6,12 +6,12 @@ scalaVersion := "2.12.14"
 
 scalacOptions += "-Xexperimental"
 
-guardrailTasks in Compile := List(
+Compile / guardrailTasks := List(
   ScalaClient(file("petstore.json"), pkg="com.example.clients.petstore", imports=List("_root_.support.PositiveLong")),
   ScalaServer(file("petstore.json"), pkg="com.example.servers.petstore", imports=List("_root_.support.PositiveLong"))
 )
 
-guardrailTasks in Test := List(
+Test / guardrailTasks := List(
   ScalaClient(file("petstore.json"), pkg="com.example.tests.clients.petstore", imports=List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._")),
   ScalaServer(file("petstore.json"), pkg="com.example.tests.servers.petstore", imports=List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._"))
 )
