@@ -6,12 +6,12 @@ scalaVersion := "2.12.14"
 
 scalacOptions += "-Xexperimental"
 
-guardrailTasks in Compile := List(
+Compile / guardrailTasks := List(
   JavaClient(file("petstore.json"), pkg="com.example.clients.petstore")
 )
 
 // workaround for SBT issue.  see: https://github.com/sbt/sbt/issues/1664
-managedSourceDirectories in Compile += (sourceManaged in Compile).value
+Compile / managedSourceDirectories += (Compile / sourceManaged).value
 
 val jacksonVersion = "2.10.1"
 val javaxAnnotationVersion = "1.3.2"

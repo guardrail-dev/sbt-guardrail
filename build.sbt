@@ -1,19 +1,19 @@
 enablePlugins(SbtPlugin)
 
 name := "sbt-guardrail"
-organization in ThisBuild := "com.twilio"
+ThisBuild / organization := "dev.guardrail"
 description := "Principled code generation from OpenAPI specifications, sbt plugin"
-homepage in ThisBuild := Some(url("https://github.com/twilio/sbt-guardrail"))
-licenses in ThisBuild += ("MIT", url("https://github.com/twilio/guardrail/blob/master/LICENSE"))
+ThisBuild / homepage := Some(url("https://github.com/guardrail-dev/sbt-guardrail"))
+ThisBuild / licenses += ("MIT", url("https://github.com/guardrail-dev/guardrail/blob/master/LICENSE"))
 
-scmInfo in ThisBuild := Some(
+ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/twilio/sbt-guardrail"),
-    "scm:git@github.com:twilio/sbt-guardrail.git"
+    url("https://github.com/guardrail-dev/sbt-guardrail"),
+    "scm:git@github.com:guardrail-dev/sbt-guardrail.git"
   )
 )
 
-developers in ThisBuild := List(
+ThisBuild / developers := List(
   Developer(
     id = "blast_hardcheese",
     name = "Devon Stewart",
@@ -22,8 +22,8 @@ developers in ThisBuild := List(
   )
 )
 
-scalaVersion in ThisBuild := "2.12.14"
-scalacOptions in ThisBuild ++= List("-feature", "-Xexperimental")
+ThisBuild / scalaVersion := "2.12.14"
+ThisBuild / scalacOptions ++= List("-feature", "-Xexperimental")
 
 // Versioning
 enablePlugins(GitBranchPrompt)
@@ -39,7 +39,7 @@ git.gitDescribedVersion := git.gitDescribedVersion(v => {
 git.gitUncommittedChanges := git.gitCurrentTags.value.isEmpty
 
 // Release
-publishMavenStyle in ThisBuild := true
+ThisBuild / publishMavenStyle := true
 
 scriptedLaunchOpts := { scriptedLaunchOpts.value ++
   Seq("-Xmx1024M", "-XX:MaxPermSize=256M", "-Dplugin.version=" + version.value)

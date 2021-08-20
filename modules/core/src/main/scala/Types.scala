@@ -1,7 +1,7 @@
-package com.twilio.guardrail
+package dev.guardrail
 package sbt
 
-import com.twilio.guardrail.{
+import dev.guardrail.{
   Args => ArgsImpl,
   Context => ContextImpl
 }

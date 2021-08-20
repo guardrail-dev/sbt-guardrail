@@ -1,17 +1,17 @@
-package com.twilio.guardrail
+package dev.guardrail
 package sbt
 
 import _root_.sbt.{Keys => SbtKeys, _}
 import _root_.sbt.plugins.JvmPlugin
-import com.twilio.guardrail.protocol.terms.protocol.PropertyRequirement
-import com.twilio.guardrail.{
+import dev.guardrail.protocol.terms.protocol.PropertyRequirement
+import dev.guardrail.{
   Args => ArgsImpl,
   CodegenTarget => CodegenTargetImpl,
   Context => ContextImpl
 }
 
 trait AbstractGuardrailPlugin { self: AutoPlugin =>
-  def runner: Map[String,cats.data.NonEmptyList[com.twilio.guardrail.Args]] => com.twilio.guardrail.Target[List[java.nio.file.Path]]
+  def runner: Map[String,cats.data.NonEmptyList[dev.guardrail.Args]] => dev.guardrail.Target[List[java.nio.file.Path]]
   override def requires = JvmPlugin
   override def trigger = allRequirements
 
