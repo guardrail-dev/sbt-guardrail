@@ -1,4 +1,4 @@
-package com.twilio.guardrail
+package dev.guardrail
 package sbt
 
 import java.io.File
@@ -6,7 +6,7 @@ import java.io.File
 import _root_.sbt.{ SettingKey, TaskKey }
 import scala.language.implicitConversions
 
-import com.twilio.guardrail.protocol.terms.protocol.PropertyRequirement
+import dev.guardrail.protocol.terms.protocol.PropertyRequirement
 
 sealed trait CodingConfig {
   def toOptionalRequirement: PropertyRequirement.OptionalRequirement = this match {

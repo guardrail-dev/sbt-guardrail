@@ -1,15 +1,15 @@
 enablePlugins(SbtPlugin)
 
 name := "sbt-guardrail"
-organization in ThisBuild := "com.twilio"
+organization in ThisBuild := "dev.guardrail"
 description := "Principled code generation from OpenAPI specifications, sbt plugin"
-homepage in ThisBuild := Some(url("https://github.com/twilio/sbt-guardrail"))
-licenses in ThisBuild += ("MIT", url("https://github.com/twilio/guardrail/blob/master/LICENSE"))
+ThisBuild / homepage := Some(url("https://github.com/guardrail-dev/sbt-guardrail"))
+ThisBuild / licenses += ("MIT", url("https://github.com/guardrail-dev/guardrail/blob/master/LICENSE"))
 
 scmInfo in ThisBuild := Some(
   ScmInfo(
-    url("https://github.com/twilio/sbt-guardrail"),
-    "scm:git@github.com:twilio/sbt-guardrail.git"
+    url("https://github.com/guardrail-dev/sbt-guardrail"),
+    "scm:git@github.com:guardrail-dev/sbt-guardrail.git"
   )
 )
 

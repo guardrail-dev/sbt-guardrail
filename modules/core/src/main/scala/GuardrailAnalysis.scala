@@ -1,4 +1,4 @@
-package com.twilio.guardrail
+package dev.guardrail
 package sbt
 
 import _root_.sbt._
