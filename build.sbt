@@ -64,3 +64,5 @@ lazy val root = (project in file("."))
 
 lazy val core = (project in file("modules/core"))
   .settings(commonSettings)
+
+addCommandAlias("publishLegacy", "set ThisBuild / organization := \"com.twilio\"; set publishTo := sonatypePublishToBundle.value; publishSigned")
