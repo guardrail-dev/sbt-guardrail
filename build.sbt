@@ -50,11 +50,11 @@ scriptedLaunchOpts := { scriptedLaunchOpts.value ++
 }
 
 scriptedDependencies := {
-  def use[A](@deprecated("unused", "") x: A*): Unit = () // avoid unused warnings
-  val analysis = (Keys.compile in Test).value
-  val pubPlug = (publishLocal).value
-  val pubCore = (core/publishLocal).value
-  use(analysis, pubPlug, pubCore)
+  Def.sequential(
+    (Test / Keys.compile),
+    (publishLocal),
+    (core/publishLocal)
+  ).value
 }
 
 lazy val root = (project in file("."))
