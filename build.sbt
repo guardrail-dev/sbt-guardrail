@@ -38,8 +38,12 @@ git.gitDescribedVersion := git.gitDescribedVersion(v => {
 
 git.gitUncommittedChanges := git.gitCurrentTags.value.isEmpty
 
-// Release
-ThisBuild / publishMavenStyle := true
+val commonSettings = Seq(
+  // Release
+  publishMavenStyle := true,
+  sonatypeCredentialHost := "s01.oss.sonatype.org",
+)
+
 
 scriptedLaunchOpts := { scriptedLaunchOpts.value ++
   Seq("-Xmx1024M", "-XX:MaxPermSize=256M", "-Dplugin.version=" + version.value)
@@ -54,7 +58,9 @@ scriptedDependencies := {
 }
 
 lazy val root = (project in file("."))
+  .settings(commonSettings)
   .dependsOn(core)
   .aggregate(core)
 
 lazy val core = (project in file("modules/core"))
+  .settings(commonSettings)

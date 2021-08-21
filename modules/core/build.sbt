@@ -7,5 +7,3 @@ addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 
 // Dependencies
 libraryDependencies += "dev.guardrail" %% "guardrail" % "0.64.4"
-
-sonatypeCredentialHost := "s01.oss.sonatype.org"
