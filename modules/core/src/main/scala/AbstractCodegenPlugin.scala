@@ -197,10 +197,10 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
   }
 
   def scopedSettings(name: String, scope: Configuration) = Seq(
-    Keys.guardrailTasks in scope := List.empty,
-    Keys.guardrail in scope := cachedGuardrailTask(name, _root_.sbt.Keys.streams.value)((Keys.guardrailTasks in scope).value, (SbtKeys.managedSourceDirectories in scope).value),
-    SbtKeys.sourceGenerators in scope += (Keys.guardrail in scope).taskValue,
-    SbtKeys.watchSources in scope ++= Tasks.watchSources((Keys.guardrailTasks in scope).value),
+    scope / Keys.guardrailTasks := List.empty,
+    scope / Keys.guardrail := cachedGuardrailTask(name, _root_.sbt.Keys.streams.value)((scope / Keys.guardrailTasks).value, (scope / SbtKeys.managedSourceDirectories).value),
+    scope / SbtKeys.sourceGenerators += (scope / Keys.guardrail).taskValue,
+    scope / SbtKeys.watchSources ++= Tasks.watchSources((scope / Keys.guardrailTasks).value),
   )
 
   override lazy val projectSettings = {
