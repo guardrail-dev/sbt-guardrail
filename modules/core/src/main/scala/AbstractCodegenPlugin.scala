@@ -169,8 +169,12 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
     }
   }
 
-  private def cachedGuardrailTask(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
+  private def cachedGuardrailTask(projectName: String, scope: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
         import _root_.sbt.util.CacheImplicits._
+
+        if (BuildInfo.organization == "com.twilio" && tasks.nonEmpty) {
+          streams.log.warn(s"""${projectName} / ${scope}: sbt-guardrail has changed organizations! Please change "com.twilio" to "dev.guardrail" to continue receiving updates""")
+        }
 
         def calcResult() =
           GuardrailAnalysis(Tasks.guardrailTask(runner)(tasks, sources.head).toList)
@@ -197,10 +201,10 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
   }
 
   def scopedSettings(name: String, scope: Configuration) = Seq(
-    Keys.guardrailTasks in scope := List.empty,
-    Keys.guardrail in scope := cachedGuardrailTask(name, _root_.sbt.Keys.streams.value)((Keys.guardrailTasks in scope).value, (SbtKeys.managedSourceDirectories in scope).value),
-    SbtKeys.sourceGenerators in scope += (Keys.guardrail in scope).taskValue,
-    SbtKeys.watchSources in scope ++= Tasks.watchSources((Keys.guardrailTasks in scope).value),
+    scope / Keys.guardrailTasks := List.empty,
+    scope / Keys.guardrail := cachedGuardrailTask(SbtKeys.name.value, scope.name)(name, _root_.sbt.Keys.streams.value)((scope / Keys.guardrailTasks).value, (scope / SbtKeys.managedSourceDirectories).value),
+    scope / SbtKeys.sourceGenerators += (scope / Keys.guardrail).taskValue,
+    scope / SbtKeys.watchSources ++= Tasks.watchSources((scope / Keys.guardrailTasks).value),
   )
 
   override lazy val projectSettings = {
