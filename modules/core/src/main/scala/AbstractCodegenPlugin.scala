@@ -177,7 +177,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
         }
 
         def calcResult() =
-          GuardrailAnalysis(Tasks.guardrailTask(runner)(tasks, sources.head).toList)
+          GuardrailAnalysis(BuildInfo.version, Tasks.guardrailTask(runner)(tasks, sources.head).toList)
 
         val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("last")) {
           (_, prev) =>

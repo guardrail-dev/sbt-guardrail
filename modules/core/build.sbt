@@ -9,5 +9,5 @@ addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 // Dependencies
 libraryDependencies += "dev.guardrail" %% "guardrail" % "0.64.4"
 
-buildInfoKeys := Seq[BuildInfoKey](organization)
+buildInfoKeys := Seq[BuildInfoKey](organization, version)
 buildInfoPackage := "dev.guardrail.sbt"
