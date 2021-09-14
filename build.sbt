@@ -22,7 +22,7 @@ ThisBuild / developers := List(
   )
 )
 
-ThisBuild / scalaVersion := "2.12.14"
+ThisBuild / scalaVersion := "2.12.15"
 ThisBuild / scalacOptions ++= List("-feature", "-Xexperimental")
 
 // Versioning
