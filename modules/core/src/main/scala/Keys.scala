@@ -6,7 +6,7 @@ import java.io.File
 import _root_.sbt.{ SettingKey, TaskKey }
 import scala.language.implicitConversions
 
-import dev.guardrail.protocol.terms.protocol.PropertyRequirement
+import dev.guardrail.terms.protocol.PropertyRequirement
 
 sealed trait CodingConfig {
   def toOptionalRequirement: PropertyRequirement.OptionalRequirement = this match {
