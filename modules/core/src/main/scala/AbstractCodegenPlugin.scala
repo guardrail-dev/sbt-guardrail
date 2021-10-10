@@ -3,7 +3,7 @@ package sbt
 
 import _root_.sbt.{Keys => SbtKeys, _}
 import _root_.sbt.plugins.JvmPlugin
-import dev.guardrail.protocol.terms.protocol.PropertyRequirement
+import dev.guardrail.terms.protocol.PropertyRequirement
 import dev.guardrail.{
   Args => ArgsImpl,
   CodegenTarget => CodegenTargetImpl,
