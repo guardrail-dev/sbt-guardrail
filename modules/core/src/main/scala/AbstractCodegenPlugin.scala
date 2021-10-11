@@ -170,34 +170,34 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
   }
 
   private def cachedGuardrailTask(projectName: String, scope: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
-        import _root_.sbt.util.CacheImplicits._
+    import _root_.sbt.util.CacheImplicits._
 
-        if (BuildInfo.organization == "com.twilio" && tasks.nonEmpty) {
-          streams.log.warn(s"""${projectName} / ${scope}: sbt-guardrail has changed organizations! Please change "com.twilio" to "dev.guardrail" to continue receiving updates""")
-        }
+    if (BuildInfo.organization == "com.twilio" && tasks.nonEmpty) {
+      streams.log.warn(s"""${projectName} / ${scope}: sbt-guardrail has changed organizations! Please change "com.twilio" to "dev.guardrail" to continue receiving updates""")
+    }
 
-        def calcResult() =
-          GuardrailAnalysis(BuildInfo.version, Tasks.guardrailTask(runner)(tasks, sources.head).toList)
+    def calcResult() =
+      GuardrailAnalysis(BuildInfo.version, Tasks.guardrailTask(runner)(tasks, sources.head).toList)
 
-        val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("last")) {
-          (_, prev) =>
-          val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("input")) {
-            (changed: Boolean, in: String) =>
-              prev match {
-                case None => calcResult()
-                case Some(prevResult) =>
-                  if (changed) {
-                    calcResult()
-                  } else prevResult
-              }
+    val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("last")) {
+      (_, prev) =>
+      val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("input")) {
+        (changed: Boolean, in: String) =>
+          prev match {
+            case None => calcResult()
+            case Some(prevResult) =>
+              if (changed) {
+                calcResult()
+              } else prevResult
           }
+      }
 
-          val inputs = tasks.flatMap(_._2.specPath.map( x => (FileInfo.hash(new java.io.File(x)))))
+      val inputs = tasks.flatMap(_._2.specPath.map( x => (FileInfo.hash(new java.io.File(x)))))
 
-          tracker(new String(inputs.flatMap(_.hash).toArray))
-        }
+      tracker(new String(inputs.flatMap(_.hash).toArray))
+    }
 
-      cachedResult(()).products
+    cachedResult(()).products
   }
 
   def scopedSettings(name: String, scope: Configuration) = Seq(
