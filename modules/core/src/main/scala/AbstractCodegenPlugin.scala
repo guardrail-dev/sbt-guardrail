@@ -3,6 +3,7 @@ package sbt
 
 import _root_.sbt.{Keys => SbtKeys, _}
 import _root_.sbt.plugins.JvmPlugin
+import dev.guardrail.runner.GuardrailRunner
 import dev.guardrail.terms.protocol.PropertyRequirement
 import dev.guardrail.{
   Args => ArgsImpl,
@@ -10,8 +11,7 @@ import dev.guardrail.{
   Context => ContextImpl
 }
 
-trait AbstractGuardrailPlugin { self: AutoPlugin =>
-  def runner: Map[String,cats.data.NonEmptyList[dev.guardrail.Args]] => dev.guardrail.Target[List[java.nio.file.Path]]
+trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
   override def requires = JvmPlugin
   override def trigger = allRequirements
 
@@ -177,7 +177,7 @@ trait AbstractGuardrailPlugin { self: AutoPlugin =>
     }
 
     def calcResult() =
-      GuardrailAnalysis(BuildInfo.version, Tasks.guardrailTask(runner)(tasks, sources.head).toList)
+      GuardrailAnalysis(BuildInfo.version, Tasks.guardrailTask(guardrailRunner)(tasks, sources.head).toList)
 
     val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("last")) {
       (_, prev) =>
