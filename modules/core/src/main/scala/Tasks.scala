@@ -9,13 +9,15 @@ import dev.guardrail.{Args => ArgsImpl}
 import scala.io.AnsiColor
 import scala.meta._
 import _root_.io.swagger.parser.SwaggerParserExtension
+import java.nio.file.Path
+import java.io.File
 
 class CodegenFailedException extends FeedbackProvidedException
 
 object Tasks {
   def guardrailTask(
-    runner: Map[String,cats.data.NonEmptyList[dev.guardrail.Args]] => dev.guardrail.Target[List[java.nio.file.Path]]
-  )(tasks: List[Types.Args], sourceDir: java.io.File): Seq[java.io.File] = {
+    runner: Map[String,NonEmptyList[ArgsImpl]] => Target[List[Path]]
+  )(tasks: List[Types.Args], sourceDir: File): Seq[File] = {
     // swagger-parser uses SPI to find extensions on the classpath (by default, only the OAPI2 -> OAPI3 converter)
     // See https://github.com/swagger-api/swagger-parser#extensions
     // That being said, Scala's classloader seems to have some issues finding SPI resources:
@@ -37,6 +39,9 @@ object Tasks {
         .fold[List[java.nio.file.Path]]({
           case MissingArg(args, Error.ArgName(arg)) =>
             println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
+            throw new CodegenFailedException()
+          case MissingDependency(name) =>
+            println(s"""${AnsiColor.RED}Missing dependency:${AnsiColor.RESET} ${AnsiColor.BOLD}libraryDependencies += "dev.guardrail" %% "${name}" % "<check latest version>"${AnsiColor.RESET}""")
             throw new CodegenFailedException()
           case NoArgsSpecified =>
             List.empty
@@ -77,6 +82,6 @@ object Tasks {
   }
 
   def watchSources(tasks: List[Types.Args]): Seq[WatchSource] = {
-    tasks.flatMap(_._2.specPath.map(new java.io.File(_)).map(WatchSource(_))).toSeq
+    tasks.flatMap(_._2.specPath.map(new File(_)).map(WatchSource(_))).toSeq
   }
 }
