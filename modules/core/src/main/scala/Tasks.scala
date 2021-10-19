@@ -40,6 +40,9 @@ object Tasks {
           case MissingArg(args, Error.ArgName(arg)) =>
             println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
             throw new CodegenFailedException()
+          case MissingDependency(name) =>
+            println(s"""${AnsiColor.RED}Missing dependency:${AnsiColor.RESET} ${AnsiColor.BOLD}libraryDependencies += "dev.guardrail" %% "${name}" % "<check latest version>"${AnsiColor.RESET}""")
+            throw new CodegenFailedException()
           case NoArgsSpecified =>
             List.empty
           case NoFramework =>
