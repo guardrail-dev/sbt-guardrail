@@ -10,7 +10,7 @@ addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail" % "0.66.0",
   "dev.guardrail" %% "guardrail-cli" % "0.66.0",
-  "dev.guardrail" %% "guardrail-core" % "0.65.4",
+  "dev.guardrail" %% "guardrail-core" % "0.66.0",
   "dev.guardrail" %% "guardrail-java-async-http" % "0.66.0",
   "dev.guardrail" %% "guardrail-java-dropwizard" % "0.66.0",
   "dev.guardrail" %% "guardrail-java-spring-mvc" % "0.66.0",
@@ -18,7 +18,7 @@ libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail-scala-akka-http" % "0.66.0",
   "dev.guardrail" %% "guardrail-scala-dropwizard" % "0.66.0",
   "dev.guardrail" %% "guardrail-scala-endpoints" % "0.66.0",
-  "dev.guardrail" %% "guardrail-scala-http4s" % "0.65.4",
+  "dev.guardrail" %% "guardrail-scala-http4s" % "0.66.0",
   "dev.guardrail" %% "guardrail-scala-support" % "0.66.0"
 )
 
