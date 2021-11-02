@@ -11,14 +11,14 @@ libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail" % "0.66.0",
   "dev.guardrail" %% "guardrail-cli" % "0.66.0",
   "dev.guardrail" %% "guardrail-core" % "0.66.0",
-  "dev.guardrail" %% "guardrail-java-async-http" % "0.66.0",
-  "dev.guardrail" %% "guardrail-java-dropwizard" % "0.66.0",
-  "dev.guardrail" %% "guardrail-java-spring-mvc" % "0.66.0",
-  "dev.guardrail" %% "guardrail-java-support" % "0.66.0",
+  "dev.guardrail" %% "guardrail-java-async-http" % "0.67.0",
+  "dev.guardrail" %% "guardrail-java-dropwizard" % "0.67.0",
+  "dev.guardrail" %% "guardrail-java-spring-mvc" % "0.67.0",
+  "dev.guardrail" %% "guardrail-java-support" % "0.67.0",
   "dev.guardrail" %% "guardrail-scala-akka-http" % "0.67.0",
-  "dev.guardrail" %% "guardrail-scala-dropwizard" % "0.66.0",
-  "dev.guardrail" %% "guardrail-scala-endpoints" % "0.66.0",
-  "dev.guardrail" %% "guardrail-scala-http4s" % "0.66.0",
+  "dev.guardrail" %% "guardrail-scala-dropwizard" % "0.67.0",
+  "dev.guardrail" %% "guardrail-scala-endpoints" % "0.67.0",
+  "dev.guardrail" %% "guardrail-scala-http4s" % "0.67.0",
   "dev.guardrail" %% "guardrail-scala-support" % "0.66.0"
 )
 
