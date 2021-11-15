@@ -10,7 +10,7 @@ addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail" % "0.66.0",
   "dev.guardrail" %% "guardrail-cli" % "0.66.0",
-  "dev.guardrail" %% "guardrail-core" % "0.66.0",
+  "dev.guardrail" %% "guardrail-core" % "0.68.1",
   "dev.guardrail" %% "guardrail-java-async-http" % "0.66.0",
   "dev.guardrail" %% "guardrail-java-dropwizard" % "0.66.0",
   "dev.guardrail" %% "guardrail-java-spring-mvc" % "0.66.0",
