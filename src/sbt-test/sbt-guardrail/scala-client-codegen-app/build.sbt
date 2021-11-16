@@ -25,8 +25,8 @@ libraryDependencies ++= Seq(
 ).map(_ % circeVersion)
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-http"   % "10.1.10",
-  "com.typesafe.akka" %% "akka-stream" % "2.5.23",
+  "com.typesafe.akka" %% "akka-http"   % "10.2.6",
+  "com.typesafe.akka" %% "akka-stream" % "2.6.17",
   "javax.xml.bind"     % "jaxb-api"    % "2.3.1",
   "org.scalatest"     %% "scalatest"   % "3.0.8" % "test"
 )

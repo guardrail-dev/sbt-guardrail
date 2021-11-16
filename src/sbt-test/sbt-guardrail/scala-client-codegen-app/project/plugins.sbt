@@ -5,3 +5,5 @@
                                   |Specify this property using the scriptedLaunchOpts -D.""".stripMargin)
   else addSbtPlugin("dev.guardrail" % "sbt-guardrail" % pluginVersion)
 }
+
+// libraryDependencies += "dev.guardrail" %% "guardrail-scala-akka-http" % "<once 1.0.0 dep changes propagate>"

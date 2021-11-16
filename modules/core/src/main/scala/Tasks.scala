@@ -7,7 +7,6 @@ import cats.implicits._
 import cats.~>
 import dev.guardrail.{Args => ArgsImpl}
 import scala.io.AnsiColor
-import scala.meta._
 import _root_.io.swagger.parser.SwaggerParserExtension
 import java.nio.file.Path
 import java.io.File
