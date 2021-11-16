@@ -1,3 +1,7 @@
 target/
 .DS_Store
 .idea/
+.bloop/
+.bsp/
+.metals/
+metals.sbt
