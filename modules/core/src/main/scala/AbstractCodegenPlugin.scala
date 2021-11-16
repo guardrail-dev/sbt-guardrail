@@ -120,24 +120,6 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
     val guardrailTasks = Keys.guardrailTasks
     val guardrail = Keys.guardrail
 
-    @deprecated("0.45.0", "Please use ScalaClient instead")
-    object Client extends ClientServer {
-      val kind = CodegenTargetImpl.Client
-      val language = "scala"
-    }
-
-    @deprecated("0.45.0", "Please use ScalaModels instead")
-    object Models extends ClientServer {
-      val kind = CodegenTargetImpl.Models
-      val language = "scala"
-    }
-
-    @deprecated("0.45.0", "Please use ScalaServer instead")
-    object Server extends ClientServer {
-      val kind = CodegenTargetImpl.Server
-      val language = "scala"
-    }
-
     object ScalaClient extends ClientServer {
       val kind = CodegenTargetImpl.Client
       val language = "scala"
