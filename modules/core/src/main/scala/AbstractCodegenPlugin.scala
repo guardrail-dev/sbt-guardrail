@@ -151,7 +151,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
     }
   }
 
-  private def cachedGuardrailTask(projectName: String, scope: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
+  private def cachedGuardrailTask(projectName: String, scope: String, scalaBinaryVersion: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
     import _root_.sbt.util.CacheImplicits._
 
     if (BuildInfo.organization == "com.twilio" && tasks.nonEmpty) {
@@ -161,9 +161,9 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
     def calcResult() =
       GuardrailAnalysis(BuildInfo.version, Tasks.guardrailTask(guardrailRunner)(tasks, sources.head).toList)
 
-    val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("last")) {
+    val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(scalaBinaryVersion).sub(kind).make("last")) {
       (_, prev) =>
-      val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(kind).make("input")) {
+      val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(scalaBinaryVersion).sub(kind).make("input")) {
         (changed: Boolean, in: String) =>
           prev match {
             case None => calcResult()
@@ -184,7 +184,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
 
   def scopedSettings(name: String, scope: Configuration) = Seq(
     scope / Keys.guardrailTasks := List.empty,
-    scope / Keys.guardrail := cachedGuardrailTask(SbtKeys.name.value, scope.name)(name, _root_.sbt.Keys.streams.value)((scope / Keys.guardrailTasks).value, (scope / SbtKeys.managedSourceDirectories).value),
+    scope / Keys.guardrail := cachedGuardrailTask(SbtKeys.name.value, scope.name, SbtKeys.scalaBinaryVersion.value)(name, _root_.sbt.Keys.streams.value)((scope / Keys.guardrailTasks).value, (scope / SbtKeys.managedSourceDirectories).value),
     scope / SbtKeys.sourceGenerators += (scope / Keys.guardrail).taskValue,
     scope / SbtKeys.watchSources ++= Tasks.watchSources((scope / Keys.guardrailTasks).value),
   )
