@@ -14,11 +14,11 @@ libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail-scala-support" % "0.68.1",
 
   // Pending removal, before we hit 1.0.0, as per https://github.com/guardrail-dev/guardrail/issues/1195
-  "dev.guardrail" %% "guardrail-java-async-http" % "0.67.1",
+  "dev.guardrail" %% "guardrail-java-async-http" % "0.68.0",
   "dev.guardrail" %% "guardrail-java-dropwizard" % "0.67.1",
-  "dev.guardrail" %% "guardrail-java-spring-mvc" % "0.67.1",
+  "dev.guardrail" %% "guardrail-java-spring-mvc" % "0.68.0",
   "dev.guardrail" %% "guardrail-scala-akka-http" % "0.69.0",
-  "dev.guardrail" %% "guardrail-scala-dropwizard" % "0.67.1",
+  "dev.guardrail" %% "guardrail-scala-dropwizard" % "0.68.0",
   "dev.guardrail" %% "guardrail-scala-endpoints" % "0.67.1",
   "dev.guardrail" %% "guardrail-scala-http4s" % "0.69.0"
 )
