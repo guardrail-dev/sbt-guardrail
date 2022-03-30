@@ -23,5 +23,6 @@ libraryDependencies ++= Seq(
   "org.asynchttpclient"               % "async-http-client"         % "2.10.4",
   "javax.annotation"                  %  "javax.annotation-api"     % javaxAnnotationVersion, // for jdk11
   "javax.xml.bind"                    % "jaxb-api"                  % "2.3.1",
-  "org.scalatest"                    %% "scalatest"                 % "3.0.8" % "test"
+  "org.scala-lang.modules"           %% "scala-java8-compat"        % "1.0.2",
+  "org.scalatest"                    %% "scalatest"                 % "3.0.8" % Test
 )
