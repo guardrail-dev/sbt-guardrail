@@ -35,7 +35,7 @@ object Keys {
   val guardrailTasks = SettingKey[List[Types.Args]]("guardrail-tasks")
   val guardrail = TaskKey[Seq[File]](
     "guardrail",
-    "Generate swagger sources"
+    "Generate source from Swagger/OpenAPI specifications"
   )
 
   def codingRequiredNullable: CodingConfig = CodingConfig.RequiredNullable
