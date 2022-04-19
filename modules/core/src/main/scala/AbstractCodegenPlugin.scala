@@ -28,6 +28,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Option[CodingConfig],
       decodeOptionalAs: Option[CodingConfig],
       customExtraction: Option[Boolean],
+      tagsBehaviour: Option[ContextImpl.TagsBehaviour]
     ): ArgsImpl = {
       val propertyRequirement = (encodeOptionalAs, decodeOptionalAs) match {
         case (None, None)       => ContextImpl.empty.propertyRequirement
@@ -44,6 +45,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       val contextTransforms = Seq[ContextImpl => ContextImpl](
         kindaLens(customExtraction)(a => _.copy(customExtraction=a)),
         kindaLens(tracing)(a => _.copy(tracing=a)),
+        kindaLens(tagsBehaviour)(a => _.copy(tagsBehaviour=a))
       )
 
       ArgsImpl.empty.copy(
@@ -78,6 +80,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       customExtraction: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
+      tagsBehaviour: Keys.SwaggerConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
     ): Types.Args = (language, impl(
       kind = kind,
       specPath = Some(specPath),
@@ -90,6 +93,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs = encodeOptionalAs.toOption,
       decodeOptionalAs = decodeOptionalAs.toOption,
       customExtraction = customExtraction.toOption,
+      tagsBehaviour = tagsBehaviour.toOption,
       defaults = false
     ))
 
@@ -103,6 +107,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       customExtraction: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
+      tagsBehaviour: Keys.SwaggerConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
 
       // Deprecated parameters
       packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
@@ -119,6 +124,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs = encodeOptionalAs.toOption,
       decodeOptionalAs = decodeOptionalAs.toOption,
       customExtraction = customExtraction.toOption,
+      tagsBehaviour = tagsBehaviour.toOption,
       defaults = true
     ))
   }

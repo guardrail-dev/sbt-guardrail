@@ -6,6 +6,7 @@ import java.io.File
 import _root_.sbt.{ SettingKey, TaskKey }
 import scala.language.implicitConversions
 
+import dev.guardrail.Context
 import dev.guardrail.terms.protocol.PropertyRequirement
 
 sealed trait CodingConfig {
@@ -41,4 +42,7 @@ object Keys {
   def codingRequiredNullable: CodingConfig = CodingConfig.RequiredNullable
   def codingOptional: CodingConfig = CodingConfig.Optional
   def codingOptionalLegacy: CodingConfig = CodingConfig.OptionalLegacy
+
+  def tagsAreIgnored: Context.TagsBehaviour = Context.TagsAreIgnored
+  def tagsFromPackage: Context.TagsBehaviour = Context.PackageFromTags
 }
