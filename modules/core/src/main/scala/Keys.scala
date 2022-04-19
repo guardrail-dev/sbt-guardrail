@@ -23,13 +23,13 @@ object CodingConfig {
 }
 
 object Keys {
-  sealed trait SwaggerConfigValue[T] { def toOption: Option[T] }
-  def Default[T]: SwaggerConfigValue[T] = SwaggerConfigValue.Default()
-  def Value[T](value: T): SwaggerConfigValue[T] = SwaggerConfigValue.Value(value)
-  object SwaggerConfigValue {
-    case class Default[T]() extends SwaggerConfigValue[T] { def toOption = None }
-    case class Value[T](value: T) extends SwaggerConfigValue[T] { def toOption = Some(value) }
-    implicit def liftSwaggerConfigValue[T](value: T): SwaggerConfigValue[T] = Value(value)
+  sealed trait GuardrailConfigValue[T] { def toOption: Option[T] }
+  def Default[T]: GuardrailConfigValue[T] = GuardrailConfigValue.Default()
+  def Value[T](value: T): GuardrailConfigValue[T] = GuardrailConfigValue.Value(value)
+  object GuardrailConfigValue {
+    case class Default[T]() extends GuardrailConfigValue[T] { def toOption = None }
+    case class Value[T](value: T) extends GuardrailConfigValue[T] { def toOption = Some(value) }
+    implicit def liftGuardrailConfigValue[T](value: T): GuardrailConfigValue[T] = Value(value)
   }
 
   val guardrailDefaults = SettingKey[Args]("guardrail-defaults")

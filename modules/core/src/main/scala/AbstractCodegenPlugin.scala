@@ -72,15 +72,15 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
     def apply(
       specPath: java.io.File,
       pkg: String = "swagger",
-      dto: Keys.SwaggerConfigValue[String] = Keys.Default,
-      framework: Keys.SwaggerConfigValue[String] = Keys.Default,
-      tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
-      modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-      imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-      encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
-      decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
-      customExtraction: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
-      tagsBehaviour: Keys.SwaggerConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
+      dto: Keys.GuardrailConfigValue[String] = Keys.Default,
+      framework: Keys.GuardrailConfigValue[String] = Keys.Default,
+      tracing: Keys.GuardrailConfigValue[Boolean] = Keys.Default,
+      modules: Keys.GuardrailConfigValue[List[String]] = Keys.Default,
+      imports: Keys.GuardrailConfigValue[List[String]] = Keys.Default,
+      encodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
+      decodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
+      customExtraction: Keys.GuardrailConfigValue[Boolean] = Keys.Default,
+      tagsBehaviour: Keys.GuardrailConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
     ): Types.Args = (language, impl(
       kind = kind,
       specPath = Some(specPath),
@@ -98,20 +98,20 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
     ))
 
     def defaults(
-      pkg: Keys.SwaggerConfigValue[String] = Keys.Default,
-      dto: Keys.SwaggerConfigValue[String] = Keys.Default,
-      framework: Keys.SwaggerConfigValue[String] = Keys.Default,
-      tracing: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
-      modules: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-      imports: Keys.SwaggerConfigValue[List[String]] = Keys.Default,
-      encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
-      decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
-      customExtraction: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
-      tagsBehaviour: Keys.SwaggerConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
+      pkg: Keys.GuardrailConfigValue[String] = Keys.Default,
+      dto: Keys.GuardrailConfigValue[String] = Keys.Default,
+      framework: Keys.GuardrailConfigValue[String] = Keys.Default,
+      tracing: Keys.GuardrailConfigValue[Boolean] = Keys.Default,
+      modules: Keys.GuardrailConfigValue[List[String]] = Keys.Default,
+      imports: Keys.GuardrailConfigValue[List[String]] = Keys.Default,
+      encodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
+      decodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
+      customExtraction: Keys.GuardrailConfigValue[Boolean] = Keys.Default,
+      tagsBehaviour: Keys.GuardrailConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
 
       // Deprecated parameters
-      packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
-      dtoPackage: Keys.SwaggerConfigValue[String] = Keys.Default
+      packageName: Keys.GuardrailConfigValue[String] = Keys.Default,
+      dtoPackage: Keys.GuardrailConfigValue[String] = Keys.Default
     ): Types.Args = (language, impl(
       kind = kind,
       specPath = None,
