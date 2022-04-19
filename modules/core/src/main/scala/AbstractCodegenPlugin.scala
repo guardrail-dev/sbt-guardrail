@@ -163,6 +163,13 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       val kind = CodegenTargetImpl.Server
       val language = "java"
     }
+
+    def codingRequiredNullable = Keys.codingRequiredNullable
+    def codingOptional = Keys.codingOptional
+    def codingOptionalLegacy = Keys.codingOptionalLegacy
+
+    def tagsAreIgnored = Keys.tagsAreIgnored
+    def tagsAsPackage = Keys.tagsAsPackage
   }
 
   private def cachedGuardrailTask(projectName: String, scope: String, scalaBinaryVersion: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
