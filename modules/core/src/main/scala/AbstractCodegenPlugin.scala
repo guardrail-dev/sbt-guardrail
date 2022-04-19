@@ -28,6 +28,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Option[CodingConfig],
       decodeOptionalAs: Option[CodingConfig],
       customExtraction: Option[Boolean],
+      tagsBehaviour: Option[ContextImpl.TagsBehaviour]
     ): ArgsImpl = {
       val propertyRequirement = (encodeOptionalAs, decodeOptionalAs) match {
         case (None, None)       => ContextImpl.empty.propertyRequirement
@@ -39,6 +40,14 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
           )
       }
 
+      def kindaLens[A](member: Option[A])(proj: A => ContextImpl => ContextImpl): ContextImpl => ContextImpl = member.fold[ContextImpl => ContextImpl](identity _)(proj)
+
+      val contextTransforms = Seq[ContextImpl => ContextImpl](
+        kindaLens(customExtraction)(a => _.copy(customExtraction=a)),
+        kindaLens(tracing)(a => _.copy(tracing=a)),
+        kindaLens(tagsBehaviour)(a => _.copy(tagsBehaviour=a))
+      )
+
       ArgsImpl.empty.copy(
         defaults=defaults,
         kind=kind,
@@ -46,13 +55,14 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
         packageName=packageName.map(_.split('.').toList),
         dtoPackage=dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList),
         imports=imports,
-        context=ContextImpl.empty.copy(
-          customExtraction=customExtraction.getOrElse(ContextImpl.empty.customExtraction),
-          framework=framework,
-          tracing=tracing.getOrElse(ContextImpl.empty.tracing),
-          modules=modules,
-          propertyRequirement=propertyRequirement
-        ))
+        context=contextTransforms.foldLeft(
+          ContextImpl.empty.copy(
+            framework=framework,
+            modules=modules,
+            propertyRequirement=propertyRequirement
+          )
+        )({ case (acc, next) => next(acc) })
+      )
     }
 
   sealed trait ClientServer {
@@ -70,6 +80,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       customExtraction: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
+      tagsBehaviour: Keys.SwaggerConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
     ): Types.Args = (language, impl(
       kind = kind,
       specPath = Some(specPath),
@@ -82,6 +93,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs = encodeOptionalAs.toOption,
       decodeOptionalAs = decodeOptionalAs.toOption,
       customExtraction = customExtraction.toOption,
+      tagsBehaviour = tagsBehaviour.toOption,
       defaults = false
     ))
 
@@ -95,6 +107,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       decodeOptionalAs: Keys.SwaggerConfigValue[CodingConfig] = Keys.Default,
       customExtraction: Keys.SwaggerConfigValue[Boolean] = Keys.Default,
+      tagsBehaviour: Keys.SwaggerConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
 
       // Deprecated parameters
       packageName: Keys.SwaggerConfigValue[String] = Keys.Default,
@@ -111,6 +124,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs = encodeOptionalAs.toOption,
       decodeOptionalAs = decodeOptionalAs.toOption,
       customExtraction = customExtraction.toOption,
+      tagsBehaviour = tagsBehaviour.toOption,
       defaults = true
     ))
   }
