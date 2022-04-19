@@ -44,5 +44,5 @@ object Keys {
   def codingOptionalLegacy: CodingConfig = CodingConfig.OptionalLegacy
 
   def tagsAreIgnored: Context.TagsBehaviour = Context.TagsAreIgnored
-  def tagsFromPackage: Context.TagsBehaviour = Context.PackageFromTags
+  def tagsAsPackage: Context.TagsBehaviour = Context.PackageFromTags
 }
