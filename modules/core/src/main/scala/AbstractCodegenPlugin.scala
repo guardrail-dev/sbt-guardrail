@@ -39,6 +39,13 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
           )
       }
 
+      def kindaLens[A](member: Option[A])(proj: A => ContextImpl => ContextImpl): ContextImpl => ContextImpl = member.fold[ContextImpl => ContextImpl](identity _)(proj)
+
+      val contextTransforms = Seq[ContextImpl => ContextImpl](
+        kindaLens(customExtraction)(a => _.copy(customExtraction=a)),
+        kindaLens(tracing)(a => _.copy(tracing=a)),
+      )
+
       ArgsImpl.empty.copy(
         defaults=defaults,
         kind=kind,
@@ -46,13 +53,14 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
         packageName=packageName.map(_.split('.').toList),
         dtoPackage=dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList),
         imports=imports,
-        context=ContextImpl.empty.copy(
-          customExtraction=customExtraction.getOrElse(ContextImpl.empty.customExtraction),
-          framework=framework,
-          tracing=tracing.getOrElse(ContextImpl.empty.tracing),
-          modules=modules,
-          propertyRequirement=propertyRequirement
-        ))
+        context=contextTransforms.foldLeft(
+          ContextImpl.empty.copy(
+            framework=framework,
+            modules=modules,
+            propertyRequirement=propertyRequirement
+          )
+        )({ case (acc, next) => next(acc) })
+      )
     }
 
   sealed trait ClientServer {
