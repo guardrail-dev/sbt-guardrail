@@ -6,7 +6,7 @@ import java.io.File
 import _root_.sbt.{ SettingKey, TaskKey }
 import scala.language.implicitConversions
 
-import dev.guardrail.Context
+import dev.guardrail.{AuthImplementation, Context}
 import dev.guardrail.terms.protocol.PropertyRequirement
 
 sealed trait CodingConfig {
@@ -45,4 +45,9 @@ object Keys {
 
   def tagsAreIgnored: Context.TagsBehaviour = Context.TagsAreIgnored
   def tagsAsPackage: Context.TagsBehaviour = Context.PackageFromTags
+
+  def authImplementationDisable: AuthImplementation = AuthImplementation.Disable
+  def authImplementationNative: AuthImplementation = AuthImplementation.Native
+  def authImplementationSimple: AuthImplementation = AuthImplementation.Simple
+  def authImplementationCustom: AuthImplementation = AuthImplementation.Custom
 }
