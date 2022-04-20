@@ -177,6 +177,11 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
 
     def tagsAreIgnored = Keys.tagsAreIgnored
     def tagsAsPackage = Keys.tagsAsPackage
+
+    def authImplementationDisable = Keys.authImplementationDisable
+    def authImplementationNative = Keys.authImplementationNative
+    def authImplementationSimple = Keys.authImplementationSimple
+    def authImplementationCustom = Keys.authImplementationCustom
   }
 
   private def cachedGuardrailTask(projectName: String, scope: String, scalaBinaryVersion: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
