@@ -44,8 +44,8 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
 
       val contextTransforms = Seq[ContextImpl => ContextImpl](
         kindaLens(customExtraction)(a => _.copy(customExtraction=a)),
-        kindaLens(tracing)(a => _.copy(tracing=a)),
-        kindaLens(tagsBehaviour)(a => _.copy(tagsBehaviour=a))
+        kindaLens(tagsBehaviour)(a => _.copy(tagsBehaviour=a)),
+        kindaLens(tracing)(a => _.copy(tracing=a))
       )
 
       ArgsImpl.empty.copy(
