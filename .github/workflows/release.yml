@@ -1,8 +1,6 @@
 name: Release
 
 on:
-  create:
-    ref_type: tag
   release:
     types:
       - released
