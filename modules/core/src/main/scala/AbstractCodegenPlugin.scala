@@ -7,6 +7,7 @@ import dev.guardrail.runner.GuardrailRunner
 import dev.guardrail.terms.protocol.PropertyRequirement
 import dev.guardrail.{
   Args => ArgsImpl,
+  AuthImplementation,
   CodegenTarget => CodegenTargetImpl,
   Context => ContextImpl
 }
@@ -28,7 +29,8 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Option[CodingConfig],
       decodeOptionalAs: Option[CodingConfig],
       customExtraction: Option[Boolean],
-      tagsBehaviour: Option[ContextImpl.TagsBehaviour]
+      tagsBehaviour: Option[ContextImpl.TagsBehaviour],
+      authImplementation: Option[AuthImplementation]
     ): ArgsImpl = {
       val propertyRequirement = (encodeOptionalAs, decodeOptionalAs) match {
         case (None, None)       => ContextImpl.empty.propertyRequirement
@@ -43,6 +45,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       def kindaLens[A](member: Option[A])(proj: A => ContextImpl => ContextImpl): ContextImpl => ContextImpl = member.fold[ContextImpl => ContextImpl](identity _)(proj)
 
       val contextTransforms = Seq[ContextImpl => ContextImpl](
+        kindaLens(authImplementation)(a => _.copy(authImplementation=a)),
         kindaLens(customExtraction)(a => _.copy(customExtraction=a)),
         kindaLens(tagsBehaviour)(a => _.copy(tagsBehaviour=a)),
         kindaLens(tracing)(a => _.copy(tracing=a))
@@ -81,6 +84,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       decodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
       customExtraction: Keys.GuardrailConfigValue[Boolean] = Keys.Default,
       tagsBehaviour: Keys.GuardrailConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
+      authImplementation: Keys.GuardrailConfigValue[AuthImplementation] = Keys.Default,
     ): Types.Args = (language, impl(
       kind = kind,
       specPath = Some(specPath),
@@ -94,6 +98,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       decodeOptionalAs = decodeOptionalAs.toOption,
       customExtraction = customExtraction.toOption,
       tagsBehaviour = tagsBehaviour.toOption,
+      authImplementation = authImplementation.toOption,
       defaults = false
     ))
 
@@ -108,6 +113,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       decodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
       customExtraction: Keys.GuardrailConfigValue[Boolean] = Keys.Default,
       tagsBehaviour: Keys.GuardrailConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
+      authImplementation: Keys.GuardrailConfigValue[AuthImplementation] = Keys.Default,
 
       // Deprecated parameters
       packageName: Keys.GuardrailConfigValue[String] = Keys.Default,
@@ -125,6 +131,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       decodeOptionalAs = decodeOptionalAs.toOption,
       customExtraction = customExtraction.toOption,
       tagsBehaviour = tagsBehaviour.toOption,
+      authImplementation = authImplementation.toOption,
       defaults = true
     ))
   }
