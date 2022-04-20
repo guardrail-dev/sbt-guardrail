@@ -25,6 +25,12 @@ ThisBuild / developers := List(
 ThisBuild / scalaVersion := "2.12.15"
 ThisBuild / scalacOptions ++= List("-feature", "-Xexperimental")
 
+libraryDependencies ++= Seq(
+    "org.scalatest" %% "scalatest" % "3.2.11" % Test,
+    "org.scalacheck" %% "scalacheck" % "1.16.0" % Test,
+    "org.scalatestplus" %% "scalatestplus-scalacheck" % "3.1.0.0-RC2" % Test
+  )
+
 // Versioning
 enablePlugins(GitBranchPrompt)
 enablePlugins(GitVersioning)
