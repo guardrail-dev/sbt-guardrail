@@ -17,9 +17,9 @@ libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail-java-async-http" % "0.68.0",
   "dev.guardrail" %% "guardrail-java-dropwizard" % "0.68.0",
   "dev.guardrail" %% "guardrail-java-spring-mvc" % "0.68.0",
-  "dev.guardrail" %% "guardrail-scala-akka-http" % "0.70.0",
+  "dev.guardrail" %% "guardrail-scala-akka-http" % "0.71.0",
   "dev.guardrail" %% "guardrail-scala-dropwizard" % "0.68.0",
-  "dev.guardrail" %% "guardrail-scala-http4s" % "0.70.0"
+  "dev.guardrail" %% "guardrail-scala-http4s" % "0.71.0"
 )
 
 buildInfoKeys := Seq[BuildInfoKey](organization, version)
