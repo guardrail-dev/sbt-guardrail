@@ -11,7 +11,7 @@ libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail" % "0.70.0",
   "dev.guardrail" %% "guardrail-core" % "0.69.0",
   "dev.guardrail" %% "guardrail-java-support" % "0.68.0",
-  "dev.guardrail" %% "guardrail-scala-support" % "0.69.1",
+  "dev.guardrail" %% "guardrail-scala-support" % "0.70.0",
 
   // Pending removal, before we hit 1.0.0, as per https://github.com/guardrail-dev/guardrail/issues/1195
   "dev.guardrail" %% "guardrail-java-async-http" % "0.68.0",
