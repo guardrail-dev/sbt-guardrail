@@ -48,6 +48,7 @@ val commonSettings = Seq(
   // Release
   publishMavenStyle := true,
   sonatypeCredentialHost := "s01.oss.sonatype.org",
+  evictionErrorLevel := Level.Debug
 )
 
 
