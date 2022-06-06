@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch: {}
 
 jobs:
   build:
@@ -13,33 +14,7 @@ jobs:
         java: [ '8' ]
         scala: [ '2.12.15' ]
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ matrix.java }}
-    - name: print Java version
-      run: java -version
-    - uses: actions/cache@v1
-      with:
-        path: ~/.cache/coursier
-        key: ${{ runner.os }}-scala-${{ matrix.scala }}-${{ hashFiles('**/*.sbt') }}
-        restore-keys: |
-          ${{ runner.os }}-scala-${{ matrix.scala }}-
-    - name: Guess next version based on the library version
-      id: guessversion
-      run: |
-        source scripts/next-version.sh
-        echo "::set-output name=exists::${exists}"
-        echo "VERSION=${version}" >> $GITHUB_ENV
     - name: Publish release notes
-      if: steps.guessversion.outputs.exists == 0
       uses: release-drafter/release-drafter@v5
-      with:
-        name: "v${{ env.VERSION }}"
-        tag: "v${{ env.VERSION }}"
-        version: "v${{ env.VERSION }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
