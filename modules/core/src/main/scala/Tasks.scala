@@ -70,8 +70,17 @@ object Tasks {
           case ModuleConflict(section) =>
             println(s"${AnsiColor.RED}Error: Too many modules specified for ${section}${AnsiColor.RESET}")
             throw new CodegenFailedException()
-          case UnconsumedModules(modules) =>
-            println(s"${AnsiColor.RED}Error: Unconsumed modules: ${modules.mkString(", ")}${AnsiColor.RESET}")
+          case UnspecifiedModules(choices) =>
+            val result =
+              choices.toSeq.sortBy(_._1).foldLeft(Seq.empty[String]) { case (acc, (module, choices)) =>
+                val nextLabel = Option(choices).filter(_.nonEmpty).fold("<no choices found>")(_.toSeq.sorted.mkString(", "))
+                acc :+ s"  ${AnsiColor.BOLD}${AnsiColor.WHITE}${module}:${AnsiColor.RESET} [${AnsiColor.BLUE}${nextLabel}${AnsiColor.RESET}]"
+              }
+            println(s"${AnsiColor.RED}Unsatisfied module(s):${AnsiColor.RESET}")
+            result.foreach(println)
+            throw new CodegenFailedException()
+          case UnusedModules(unused) =>
+            println(s"${AnsiColor.RED}Unused modules specified:${AnsiColor.RESET} ${unused.toList.mkString(", ")}")
             throw new CodegenFailedException()
         }, identity)
         //.runEmpty
