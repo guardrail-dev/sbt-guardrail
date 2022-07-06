@@ -22,7 +22,7 @@ ThisBuild / developers := List(
   )
 )
 
-ThisBuild / scalaVersion := "2.12.15"
+ThisBuild / scalaVersion := "2.12.16"
 ThisBuild / scalacOptions ++= List("-feature", "-Xexperimental")
 
 libraryDependencies ++= Seq(
