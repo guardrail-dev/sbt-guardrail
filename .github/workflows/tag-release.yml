@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         java: [ '8' ]
-        scala: [ '2.12.15' ]
+        scala: [ '2.12.16' ]
     steps:
     - name: Publish release notes
       uses: release-drafter/release-drafter@v5
