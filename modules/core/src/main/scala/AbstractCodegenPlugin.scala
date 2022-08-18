@@ -138,6 +138,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
 
   trait guardrailAutoImport {
     val guardrailDefaults = Keys.guardrailDefaults
+    val guardrailDiscoveredOpenApiFiles = Keys.guardrailDiscoveredOpenApiFiles
     val guardrailTasks = Keys.guardrailTasks
     val guardrail = Keys.guardrail
 
@@ -182,6 +183,8 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
     def authImplementationNative = Keys.authImplementationNative
     def authImplementationSimple = Keys.authImplementationSimple
     def authImplementationCustom = Keys.authImplementationCustom
+
+    lazy val GuardrailHelpers = _root_.dev.guardrail.sbt.GuardrailHelpers
   }
 
   private def cachedGuardrailTask(projectName: String, scope: String, scalaBinaryVersion: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
@@ -215,12 +218,18 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
     cachedResult(()).products
   }
 
-  def scopedSettings(name: String, scope: Configuration) = Seq(
-    scope / Keys.guardrailTasks := List.empty,
-    scope / Keys.guardrail := cachedGuardrailTask(SbtKeys.name.value, scope.name, SbtKeys.scalaBinaryVersion.value)(name, _root_.sbt.Keys.streams.value)((scope / Keys.guardrailTasks).value, (scope / SbtKeys.managedSourceDirectories).value),
-    scope / SbtKeys.sourceGenerators += (scope / Keys.guardrail).taskValue,
-    scope / SbtKeys.watchSources ++= Tasks.watchSources((scope / Keys.guardrailTasks).value),
-  )
+  def scopedSettings(name: String, scope: Configuration) = {
+    import _root_.sbt.Keys.{resourceDirectory, sourceDirectory, unmanagedResourceDirectories, unmanagedSourceDirectories}
+    Seq(
+      scope / unmanagedSourceDirectories += (scope / sourceDirectory).value / "openapi",
+      scope / unmanagedResourceDirectories += (scope / resourceDirectory).value / "openapi",
+      scope / Keys.guardrailDiscoveredOpenApiFiles := GuardrailHelpers.discoverOpenApiFiles((scope / sourceDirectory).value / "openapi"),
+      scope / Keys.guardrailTasks := List.empty,
+      scope / Keys.guardrail := cachedGuardrailTask(SbtKeys.name.value, scope.name, SbtKeys.scalaBinaryVersion.value)(name, _root_.sbt.Keys.streams.value)((scope / Keys.guardrailTasks).value, (scope / SbtKeys.managedSourceDirectories).value),
+      scope / SbtKeys.sourceGenerators += (scope / Keys.guardrail).taskValue,
+      scope / SbtKeys.watchSources ++= Tasks.watchSources((scope / Keys.guardrailTasks).value),
+    )
+  }
 
   override lazy val projectSettings = {
     scopedSettings("compile", Compile) ++ scopedSettings("test", Test)

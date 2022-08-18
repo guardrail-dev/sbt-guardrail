@@ -3,7 +3,7 @@ package helloworld
 import scala.compat.java8.FutureConverters._
 import scala.concurrent.Future
 
-import com.example.clients.petstore.user.UserClient
+import com.example.petstore.client.user.UserClient
 import org.asynchttpclient.Response
 
 object Hello {

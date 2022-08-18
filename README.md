@@ -15,7 +15,7 @@ addSbtPlugin("dev.guardrail" % "sbt-guardrail" % "<Please use the latest availab
 ```
 
 ### `build.sbt`
-```
+```scala
 /* Available arguments:
     specPath: java.io.File
     pkg: String
@@ -38,4 +38,13 @@ guardrailTasks in Compile := List(
   JavaClient(file("github.yaml"), pkg="com.example.clients.github")
   ...
 )
+```
+Alternatively use the `guardrailDiscoveredOpenApiFiles` setting to automatically discover OpenAPI spec files under `src/main/openapi` or `src/test/openapi` (see the [test for full example](src/sbt-test/sbt-guardrail/scala-client-codegen-app/build.sbt)):
+```scala
+Compile / guardrailTasks := (Compile / guardrailDiscoveredOpenApiFiles).value.flatMap { openApiFile =>
+  List(          
+    ScalaClient(openApiFile.file, pkg = openApiFile.pkg, framework = "http4s"),
+    ScalaServer(openApiFile.file, pkg = openApiFile.pkg, framework = "http4s")
+  )
+}
 ```

@@ -6,7 +6,7 @@ import akka.stream.Materializer
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import cats.implicits._
-import com.example.clients.petstore.user.UserClient
+import com.example.petstore.client.user.UserClient
 
 object Hello {
 
@@ -22,7 +22,7 @@ object Hello {
   }
 
   private def buildServer(): HttpRequest => Future[HttpResponse] = {
-    import com.example.servers.petstore.user._
+    import com.example.petstore.server.user._
     import akka.http.scaladsl.server.Route
     import akka.http.scaladsl.settings.RoutingSettings
 
@@ -37,10 +37,10 @@ object Hello {
 }
 
 class DummyUserHandler
-  extends com.example.servers.petstore.user.UserHandler {
+  extends com.example.petstore.server.user.UserHandler {
 
-  import com.example.servers.petstore.user._
-  import com.example.servers.petstore.definitions._
+  import com.example.petstore.server.user._
+  import com.example.petstore.server.definitions._
   import scala.collection._
 
   def createUser(respond: UserResource.CreateUserResponse.type)(body: User): scala.concurrent.Future[UserResource.CreateUserResponse] = ???

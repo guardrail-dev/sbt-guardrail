@@ -33,6 +33,7 @@ object Keys {
   }
 
   val guardrailDefaults = SettingKey[Args]("guardrail-defaults")
+  val guardrailDiscoveredOpenApiFiles = SettingKey[List[GuardrailHelpers.DiscoveredFile]]("guardrail-discovered-open-api-files")
   val guardrailTasks = SettingKey[List[Types.Args]]("guardrail-tasks")
   val guardrail = TaskKey[Seq[File]](
     "guardrail",

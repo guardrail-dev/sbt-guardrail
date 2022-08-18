@@ -6,15 +6,20 @@ scalaVersion := "2.12.16"
 
 scalacOptions += "-Xexperimental"
 
-Compile / guardrailTasks := List(
-  ScalaClient(file("petstore.json"), pkg="com.example.clients.petstore", imports=List("_root_.support.PositiveLong")),
-  ScalaServer(file("petstore.json"), pkg="com.example.servers.petstore", imports=List("_root_.support.PositiveLong"))
-)
+Compile / guardrailTasks := GuardrailHelpers.createGuardrailTasks((Compile / sourceDirectory).value / "openapi") { openApiFile =>
+  List(
+    ScalaClient(openApiFile.file, pkg = openApiFile.pkg + ".client", imports = List("_root_.support.PositiveLong")),
+    ScalaServer(openApiFile.file, pkg = openApiFile.pkg + ".server", imports = List("_root_.support.PositiveLong"))
+  )
+}
 
-Test / guardrailTasks := List(
-  ScalaClient(file("petstore.json"), pkg="com.example.tests.clients.petstore", imports=List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._")),
-  ScalaServer(file("petstore.json"), pkg="com.example.tests.servers.petstore", imports=List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._"))
-)
+Test / guardrailTasks := (Test / guardrailDiscoveredOpenApiFiles).value.flatMap { openApiFile =>
+  List(
+    ScalaClient(openApiFile.file, pkg = openApiFile.pkg + ".client", imports = List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._")),
+    ScalaServer(openApiFile.file, pkg = openApiFile.pkg + ".server", imports = List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._"))
+  )
+}
+
 
 val circeVersion = "0.13.0"
 

@@ -1,7 +1,7 @@
 package support.tests
 
 import _root_.support.PositiveLong
-import com.example.tests.clients.petstore.Implicits
+import com.example.tests.petstore.client.Implicits
 import io.circe.Decoder
 
 object PositiveLongInstances {

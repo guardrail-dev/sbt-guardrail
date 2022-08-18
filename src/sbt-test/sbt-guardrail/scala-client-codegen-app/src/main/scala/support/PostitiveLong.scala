@@ -1,6 +1,6 @@
 package support
 
-import com.example.clients.petstore.Implicits
+import com.example.petstore.client.Implicits
 import io.circe.Decoder
 
 class PositiveLong private (val value: Long) extends AnyVal
