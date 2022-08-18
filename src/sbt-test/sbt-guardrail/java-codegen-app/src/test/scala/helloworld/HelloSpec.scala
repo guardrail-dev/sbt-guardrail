@@ -3,7 +3,7 @@ package helloworld
 
 import java.util.concurrent.TimeUnit
 
-import com.example.petstore.client.user.LogoutUserResponse
+import com.example.clients.petstore.user.LogoutUserResponse
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 
