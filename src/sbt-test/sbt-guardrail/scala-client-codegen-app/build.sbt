@@ -13,17 +13,12 @@ Compile / guardrailTasks := GuardrailHelpers.createGuardrailTasks((Compile / sou
   )
 }
 
-Test / guardrailTasks += ScalaClient.defaults(imports = List(
-    "_root_.support.PositiveLong",
-    "_root_.support.tests.PositiveLongInstances._"
-  ))
-Test / guardrailTasks ++= (Test / guardrailDiscoveredOpenApiFiles).value.flatMap { openApiFile =>
+Test / guardrailTasks := (Test / guardrailDiscoveredOpenApiFiles).value.flatMap { openApiFile =>
   List(
-    ScalaClient(openApiFile.file, pkg = openApiFile.pkg + ".client"),
-    ScalaServer(openApiFile.file, pkg = openApiFile.pkg + ".server")
+    ScalaClient(openApiFile.file, pkg = openApiFile.pkg + ".client", imports = List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._")),
+    ScalaServer(openApiFile.file, pkg = openApiFile.pkg + ".server", imports = List("_root_.support.PositiveLong", "_root_.support.tests.PositiveLongInstances._"))
   )
 }
-
 
 val circeVersion = "0.13.0"
 
