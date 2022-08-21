@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail-java-spring-mvc" % "0.71.2",
   "dev.guardrail" %% "guardrail-scala-akka-http" % "0.75.0",
   "dev.guardrail" %% "guardrail-scala-dropwizard" % "0.72.0",
-  "dev.guardrail" %% "guardrail-scala-http4s" % "0.75.0"
+  "dev.guardrail" %% "guardrail-scala-http4s" % "0.75.0",
+  "org.snakeyaml" % "snakeyaml-engine" % "2.3"
 )
 
 buildInfoKeys := Seq[BuildInfoKey](organization, version)

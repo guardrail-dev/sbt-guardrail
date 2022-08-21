@@ -38,7 +38,7 @@ git.useGitDescribe := true
 
 git.gitDescribedVersion := git.gitDescribedVersion(v => {
   import scala.sys.process._
-  val nativeGitDescribeResult = ("git describe --tags HEAD" !!).trim
+  val nativeGitDescribeResult = ("git describe --tags --always HEAD" !!).trim
   git.defaultTagByVersionStrategy(nativeGitDescribeResult)
 }).value
 
@@ -53,7 +53,7 @@ val commonSettings = Seq(
 
 
 scriptedLaunchOpts := { scriptedLaunchOpts.value ++
-  Seq("-Xmx1024M", "-XX:MaxPermSize=256M", "-Dplugin.version=" + version.value)
+  Seq("-Xmx1024M", "-Dplugin.version=" + version.value)
 }
 
 scriptedDependencies := {
