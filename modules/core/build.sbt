@@ -8,7 +8,7 @@ addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 
 // Dependencies
 libraryDependencies ++= Seq(
-  "dev.guardrail" %% "guardrail-core" % "0.75.1",
+  "dev.guardrail" %% "guardrail-core" % "0.75.3",
   "dev.guardrail" %% "guardrail-java-support" % "0.73.1",
   "dev.guardrail" %% "guardrail-scala-support" % "0.75.2",
 
