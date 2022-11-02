@@ -26,7 +26,7 @@ ThisBuild / scalaVersion := "2.12.17"
 ThisBuild / scalacOptions ++= List("-feature", "-Xexperimental")
 
 libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "3.2.13" % Test,
+    "org.scalatest" %% "scalatest" % "3.2.14" % Test,
     "org.scalacheck" %% "scalacheck" % "1.17.0" % Test,
     "org.scalatestplus" %% "scalatestplus-scalacheck" % "3.1.0.0-RC2" % Test
   )
