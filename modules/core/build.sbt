@@ -10,7 +10,7 @@ addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
 libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail-core" % "0.75.3",
   "dev.guardrail" %% "guardrail-java-support" % "0.73.1",
-  "dev.guardrail" %% "guardrail-scala-support" % "0.75.2",
+  "dev.guardrail" %% "guardrail-scala-support" % "0.75.3",
 
   // Pending removal, before we hit 1.0.0, as per https://github.com/guardrail-dev/guardrail/issues/1195
   "dev.guardrail" %% "guardrail-java-async-http" % "0.72.0",
