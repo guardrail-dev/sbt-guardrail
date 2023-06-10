@@ -188,34 +188,19 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
   }
 
   private def cachedGuardrailTask(projectName: String, scope: String, scalaBinaryVersion: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
-    import _root_.sbt.util.CacheImplicits._
+    val inputFiles = tasks.flatMap(_._2.specPath).map(file(_)).toSet
+    val cacheDir = streams.cacheDirectory / "guardrail"
 
-    if (BuildInfo.organization == "com.twilio" && tasks.nonEmpty) {
-      streams.log.warn(s"""${projectName} / ${scope}: sbt-guardrail has changed organizations! Please change "com.twilio" to "dev.guardrail" to continue receiving updates""")
-    }
-
-    def calcResult() =
-      GuardrailAnalysis(BuildInfo.version, Tasks.guardrailTask(guardrailRunner)(tasks, sources.head).toList)
-
-    val cachedResult = Tracked.lastOutput[Unit, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(scalaBinaryVersion).sub(kind).make("last")) {
-      (_, prev) =>
-      val tracker = Tracked.inputChanged[String, GuardrailAnalysis](streams.cacheStoreFactory.sub("guardrail").sub(scalaBinaryVersion).sub(kind).make("input")) {
-        (changed: Boolean, in: String) =>
-          prev match {
-            case None => calcResult()
-            case Some(prevResult) =>
-              if (changed) {
-                calcResult()
-              } else prevResult
-          }
+    val cachedFn = _root_.sbt.util.FileFunction
+      .cached(cacheDir, inStyle = FilesInfo.hash, outStyle = FilesInfo.hash) {
+        _ =>
+          GuardrailAnalysis(
+            BuildInfo.version,
+            Tasks.guardrailTask(guardrailRunner)(tasks, sources.head)
+          ).products
       }
 
-      val inputs = tasks.flatMap(_._2.specPath.map( x => (FileInfo.hash(new java.io.File(x)))))
-
-      tracker(new String(inputs.flatMap(_.hash).toArray))
-    }
-
-    cachedResult(()).products
+    cachedFn(inputFiles).toSeq
   }
 
   def scopedSettings(name: String, scope: Configuration) = {
