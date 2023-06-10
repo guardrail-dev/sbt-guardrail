@@ -1,7 +1,7 @@
 package dev.guardrail
 package sbt
 
-import _root_.sbt.{Keys => SbtKeys, _}
+import _root_.sbt.{Keys => SbtKeys, Types => _, _}
 import _root_.sbt.plugins.JvmPlugin
 import dev.guardrail.runner.GuardrailRunner
 import dev.guardrail.terms.protocol.PropertyRequirement
@@ -189,7 +189,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
 
   private def cachedGuardrailTask(projectName: String, scope: String, scalaBinaryVersion: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
     val inputFiles = tasks.flatMap(_._2.specPath).map(file(_)).toSet
-    val cacheDir = streams.cacheDirectory / "guardrail"
+    val cacheDir = streams.cacheDirectory / "guardrail" / scalaBinaryVersion / kind
 
     val cachedFn = _root_.sbt.util.FileFunction
       .cached(cacheDir, inStyle = FilesInfo.hash, outStyle = FilesInfo.hash) {
