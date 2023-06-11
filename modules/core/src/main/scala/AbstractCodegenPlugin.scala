@@ -188,6 +188,10 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
   }
 
   private def cachedGuardrailTask(projectName: String, scope: String, scalaBinaryVersion: String)(kind: String, streams: _root_.sbt.Keys.TaskStreams)(tasks: List[(String, Args)], sources: Seq[java.io.File]) = {
+    if (BuildInfo.organization == "com.twilio" && tasks.nonEmpty) {
+      streams.log.warn(s"""${projectName} / ${scope}: sbt-guardrail has changed organizations! Please change "com.twilio" to "dev.guardrail" to continue receiving updates""")
+    }
+    
     val inputFiles = tasks.flatMap(_._2.specPath).map(file(_)).toSet
     val cacheDir = streams.cacheDirectory / "guardrail" / scalaBinaryVersion / kind
 
