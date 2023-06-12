@@ -5,13 +5,13 @@ import _root_.sbt._
 import _root_.sbt.util.CacheImplicits._
 import sjsonnew.{ :*:, LList, LNil}
 
-case class GuardrailAnalysis(guardrailVersion: String, products: List[java.io.File]) {
+case class GuardrailAnalysis(guardrailVersion: String, products: Set[java.io.File]) {
   def ++(that: GuardrailAnalysis): GuardrailAnalysis =
     GuardrailAnalysis(guardrailVersion, products ++ that.products)
 }
 object GuardrailAnalysis {
 
-  private val from: (String :*: List[java.io.File] :*: LNil) => GuardrailAnalysis = {
+  private val from: (String :*: Set[java.io.File] :*: LNil) => GuardrailAnalysis = {
     case ((_, version) :*: (_, in) :*: LNil) => GuardrailAnalysis(version, in)
   }
 
