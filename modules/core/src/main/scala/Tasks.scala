@@ -2,7 +2,6 @@ package dev.guardrail
 package sbt
 
 import _root_.sbt.{FeedbackProvidedException, WatchSource}
-import cats.data.NonEmptyList
 import cats.implicits._
 import cats.~>
 import dev.guardrail.{Args => ArgsImpl}
@@ -15,7 +14,7 @@ class CodegenFailedException extends FeedbackProvidedException
 
 object Tasks {
   def guardrailTask(
-    runner: Map[String,NonEmptyList[ArgsImpl]] => Target[List[Path]]
+    runner: (String, Array[ArgsImpl]) => Target[List[Path]]
   )(tasks: List[Types.Args], sourceDir: File): Set[File] = {
     // swagger-parser uses SPI to find extensions on the classpath (by default, only the OAPI2 -> OAPI3 converter)
     // See https://github.com/swagger-api/swagger-parser#extensions
@@ -28,14 +27,15 @@ object Tasks {
     Thread.currentThread().setContextClassLoader(classOf[SwaggerParserExtension].getClassLoader)
 
     try {
-      val preppedTasks: Map[String, NonEmptyList[ArgsImpl]] = tasks.foldLeft(Map.empty[String, NonEmptyList[ArgsImpl]]) { case (acc, (language, args)) =>
-        val prepped = args.copy(outputPath=Some(sourceDir.getPath))
-        acc.updated(language, acc.get(language).fold(NonEmptyList.one(prepped))(_ :+ prepped))
+      val preppedTasks: List[(String, Array[ArgsImpl])] = {
+        tasks.foldLeft(Map.empty[String, List[ArgsImpl]])({ case (acc, (language, args)) =>
+          val prepped = args.withOutputPath(Some(sourceDir.getPath))
+          acc.updated(language, (acc.get(language).getOrElse(List.empty[ArgsImpl]) :+ prepped))
+        }).mapValues(_.toList.toArray).toList
       }
 
       val /*(logger,*/ paths/*)*/ =
-        runner
-          .apply(preppedTasks)
+        preppedTasks.toList.traverse(runner.tupled)
           .fold[List[java.nio.file.Path]]({
             case MissingArg(args, Error.ArgName(arg)) =>
               println(s"${AnsiColor.RED}Missing argument:${AnsiColor.RESET} ${AnsiColor.BOLD}${arg}${AnsiColor.RESET} (In block ${args})")
@@ -83,7 +83,7 @@ object Tasks {
             case UnusedModules(unused) =>
               println(s"${AnsiColor.RED}Unused modules specified:${AnsiColor.RESET} ${unused.toList.mkString(", ")}")
               throw new CodegenFailedException()
-          }, identity)
+          }, _.flatten.distinct)
           //.runEmpty
 
       paths.map(_.toFile).toSet

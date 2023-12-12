@@ -9,10 +9,12 @@ import dev.guardrail.{
   Args => ArgsImpl,
   AuthImplementation,
   CodegenTarget => CodegenTargetImpl,
-  Context => ContextImpl
+  Context => ContextImpl,
+  TagsBehaviour
 }
 
-trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
+trait AbstractGuardrailPlugin { self: AutoPlugin =>
+  val runner = new GuardrailRunner {}
   override def requires = JvmPlugin
   override def trigger = allRequirements
 
@@ -29,7 +31,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Option[CodingConfig],
       decodeOptionalAs: Option[CodingConfig],
       customExtraction: Option[Boolean],
-      tagsBehaviour: Option[ContextImpl.TagsBehaviour],
+      tagsBehaviour: Option[TagsBehaviour],
       authImplementation: Option[AuthImplementation]
     ): ArgsImpl = {
       val propertyRequirement = (encodeOptionalAs, decodeOptionalAs) match {
@@ -45,27 +47,25 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       def kindaLens[A](member: Option[A])(proj: A => ContextImpl => ContextImpl): ContextImpl => ContextImpl = member.fold[ContextImpl => ContextImpl](identity _)(proj)
 
       val contextTransforms = Seq[ContextImpl => ContextImpl](
-        kindaLens(authImplementation)(a => _.copy(authImplementation=a)),
-        kindaLens(customExtraction)(a => _.copy(customExtraction=a)),
-        kindaLens(tagsBehaviour)(a => _.copy(tagsBehaviour=a)),
-        kindaLens(tracing)(a => _.copy(tracing=a))
+        kindaLens(authImplementation)(a => _.withAuthImplementation(a)),
+        kindaLens(customExtraction)(a => _.withCustomExtraction(a)),
+        kindaLens(tagsBehaviour)(a => _.withTagsBehaviour(a)),
+        kindaLens(tracing)(a => _.withTracing(a))
       )
 
-      ArgsImpl.empty.copy(
-        defaults=defaults,
-        kind=kind,
-        specPath=specPath.map(_.getPath),
-        packageName=packageName.map(_.split('.').toList),
-        dtoPackage=dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList),
-        imports=imports,
-        context=contextTransforms.foldLeft(
-          ContextImpl.empty.copy(
-            framework=framework,
-            modules=modules,
-            propertyRequirement=propertyRequirement
-          )
-        )({ case (acc, next) => next(acc) })
-      )
+      ArgsImpl.empty
+        .withDefaults(defaults)
+        .withKind(kind)
+        .withSpecPath(specPath.map(_.getPath))
+        .withPackageName(packageName.map(_.split('.').toList))
+        .withDtoPackage(dtoPackage.toList.flatMap(_.split('.').filterNot(_.isEmpty).toList))
+        .withImports(imports)
+        .withContext(contextTransforms.foldLeft(
+          ContextImpl.empty
+            .withFramework(framework)
+            .withModules(modules)
+            .withPropertyRequirement(propertyRequirement)
+        )({ case (acc, next) => next(acc) }))
     }
 
   sealed trait ClientServer {
@@ -83,7 +83,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
       decodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
       customExtraction: Keys.GuardrailConfigValue[Boolean] = Keys.Default,
-      tagsBehaviour: Keys.GuardrailConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
+      tagsBehaviour: Keys.GuardrailConfigValue[TagsBehaviour] = Keys.Default,
       authImplementation: Keys.GuardrailConfigValue[AuthImplementation] = Keys.Default,
     ): Types.Args = (language, impl(
       kind = kind,
@@ -112,7 +112,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
       encodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
       decodeOptionalAs: Keys.GuardrailConfigValue[CodingConfig] = Keys.Default,
       customExtraction: Keys.GuardrailConfigValue[Boolean] = Keys.Default,
-      tagsBehaviour: Keys.GuardrailConfigValue[ContextImpl.TagsBehaviour] = Keys.Default,
+      tagsBehaviour: Keys.GuardrailConfigValue[TagsBehaviour] = Keys.Default,
       authImplementation: Keys.GuardrailConfigValue[AuthImplementation] = Keys.Default,
 
       // Deprecated parameters
@@ -200,7 +200,7 @@ trait AbstractGuardrailPlugin extends GuardrailRunner { self: AutoPlugin =>
         _ =>
           GuardrailAnalysis(
             BuildInfo.version,
-            Tasks.guardrailTask(guardrailRunner)(tasks, sources.head)
+            Tasks.guardrailTask(runner.guardrailRunner)(tasks, sources.head)
           ).products
       }
 
