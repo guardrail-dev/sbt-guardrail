@@ -1,10 +1,16 @@
 name: Release
 
+run-name: "Release${{ inputs.version && format(' ({0})', inputs.version) || format(' (auto: {0})', github.ref_name) }}"
+
 on:
   release:
     types:
       - released
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      version:
+        type: input
+        description: 'What version to use (default: derive from git)'
 
 jobs:
   publish:
@@ -22,9 +28,19 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 8
+      - name: Incorporate version override
+        id: version-override
+        run: |
+          version="${{github.event.inputs.version}}"
+          if [ -n "$version" ]; then
+            # -Dproject.version permits overriding version
+            # https://github.com/sbt/sbt-git/blob/HEAD/src/main/scala/com/github/sbt/git/GitPlugin.scala#L183
+            echo "JAVA_OPTS=-Dproject.version=$version" >> $GITHUB_OUTPUT
+          fi
       - name: Publish artifacts
-        run: sbt ci-release publishLegacy
+        run: sbt ci-release
         env:
+          JAVA_OPTS: ${{ steps.version-override.outputs.JAVA_OPTS }}
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
