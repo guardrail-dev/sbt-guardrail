@@ -23,11 +23,9 @@ jobs:
           fetch-depth: 0
       - name: print GnuPG version
         run: gpg --version
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3.4.1
+      - uses: olafurpg/setup-scala@v14
         with:
-          distribution: 'temurin'
-          java-version: 8
+          java-version: zulu@1.14
       - name: Incorporate version override
         id: version-override
         run: |
