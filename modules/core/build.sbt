@@ -17,5 +17,18 @@ libraryDependencies ++= Seq(
   "org.snakeyaml" % "snakeyaml-engine" % "2.7"
 )
 
+// Versioning
+enablePlugins(GitBranchPrompt)
+enablePlugins(GitVersioning)
+git.useGitDescribe := true
+
+git.gitDescribedVersion := git.gitDescribedVersion(v => {
+  import scala.sys.process._
+  val nativeGitDescribeResult = ("git describe --tags --always HEAD" !!).trim
+  git.defaultTagByVersionStrategy(nativeGitDescribeResult)
+}).value
+
+git.gitUncommittedChanges := git.gitCurrentTags.value.isEmpty
+
 buildInfoKeys := Seq[BuildInfoKey](organization, version)
 buildInfoPackage := "dev.guardrail.sbt"
