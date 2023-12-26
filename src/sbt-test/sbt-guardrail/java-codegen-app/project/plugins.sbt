@@ -6,6 +6,6 @@
   else addSbtPlugin("dev.guardrail" % "sbt-guardrail" % pluginVersion)
 }
 
-libraryDependencies += "dev.guardrail" %% "guardrail-java-support" % "0.73.1"
-libraryDependencies += "dev.guardrail" %% "guardrail-java-async-http" % "0.72.0"
-libraryDependencies += "dev.guardrail" %% "guardrail-java-dropwizard" % "0.72.0"
+libraryDependencies += "dev.guardrail" %% "guardrail-java-support" % "1.0.0-M1"
+libraryDependencies += "dev.guardrail" %% "guardrail-java-async-http" % "1.0.0-M1"
+libraryDependencies += "dev.guardrail" %% "guardrail-java-dropwizard" % "1.0.0-M1"
