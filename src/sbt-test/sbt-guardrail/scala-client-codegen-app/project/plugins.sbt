@@ -6,5 +6,5 @@
   else addSbtPlugin("dev.guardrail" % "sbt-guardrail" % pluginVersion)
 }
 
-libraryDependencies += "dev.guardrail" %% "guardrail-scala-support" % "0.75.3"
-libraryDependencies += "dev.guardrail" %% "guardrail-scala-akka-http" % "0.76.0"
+libraryDependencies += "dev.guardrail" %% "guardrail-scala-support" % "1.0.0-M1"
+libraryDependencies += "dev.guardrail" %% "guardrail-scala-akka-http" % "1.0.0-M1"
