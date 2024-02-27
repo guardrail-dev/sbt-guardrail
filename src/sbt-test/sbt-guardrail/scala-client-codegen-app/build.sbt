@@ -2,7 +2,7 @@ name := "sbt-guardrail-scala-client-test-app"
 
 version := "1.0." + System.currentTimeMillis
 
-scalaVersion := "2.12.18"
+scalaVersion := "2.12.19"
 
 scalacOptions += "-Xexperimental"
 
