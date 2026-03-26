@@ -27,7 +27,7 @@ ThisBuild / scalacOptions := Seq("-target:jvm-1.8")
 ThisBuild / scalacOptions ++= List("-feature", "-Xexperimental")
 
 libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "3.2.19" % Test,
+    "org.scalatest" %% "scalatest" % "3.2.20" % Test,
     "org.scalacheck" %% "scalacheck" % "1.19.0" % Test,
     "org.scalatestplus" %% "scalacheck-1-19" % "3.2.19.0" % Test
   )

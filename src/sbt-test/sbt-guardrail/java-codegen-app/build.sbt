@@ -24,5 +24,5 @@ libraryDependencies ++= Seq(
   "javax.annotation"                  %  "javax.annotation-api"     % javaxAnnotationVersion, // for jdk11
   "javax.xml.bind"                    % "jaxb-api"                  % "2.3.1",
   "org.scala-lang.modules"           %% "scala-java8-compat"        % "1.0.2",
-  "org.scalatest"                    %% "scalatest"                 % "3.2.19" % Test
+  "org.scalatest"                    %% "scalatest"                 % "3.2.20" % Test
 )
