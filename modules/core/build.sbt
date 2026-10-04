@@ -14,7 +14,7 @@ resolvers +=
 // Dependencies
 libraryDependencies ++= Seq(
   "dev.guardrail" %% "guardrail-core" % guardrailCoreVersion,
-  "org.snakeyaml" % "snakeyaml-engine" % "2.10"
+  "org.snakeyaml" % "snakeyaml-engine" % "3.2"
 )
 
 // Versioning
